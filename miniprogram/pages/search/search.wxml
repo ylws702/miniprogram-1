@@ -1,0 +1,58 @@
+<!--miniprogram/pages/search/search.wxml-->
+<view class="main">
+	<view class="section1">
+		<view class="search-wrapper" bindtap="onSearchInputTap">
+			<input
+			 class="search-input"
+			 placeholder="{{hotSearchValue}}"
+			 value="{{searchValue}}"
+			 bindinput="{{searchInputEvent}}"
+			></input>
+			<icon class="search-icon" type="search"></icon>
+		</view>
+	</view>
+	<view class="section2">
+		<view class="recent-title">
+			<view class="recent-title-text">
+				最近搜索
+			</view>
+			<image src="../../images/trash.png" class="trash-icon" />
+		</view>
+		<view class="recent-content-wrapper">
+			<view
+			 class="recent-content"
+			 wx:for="{{recentSearch}}"
+			 wx:for-index="recentSearchIndex"
+			 wx:for-item="recentSearchText"
+			>
+				<view wx:if="{{recentSearchIndex<6}}">
+					<view>
+						{{recentSearchText}}
+					</view>
+				</view>
+			</view>
+		</view>
+	</view>
+	<view class="section3">
+		<view class="suggestion-title">
+			<view class="suggestion-title-text">
+				热门推荐
+			</view>
+		</view>
+		<view class="suggestion-content-wrapper">
+			<view
+			 class="suggestion-content"
+			 wx:for="{{suggestion}}"
+			 wx:for-index="suggestionIndex"
+			 wx:for-item="suggestionItem"
+			>
+				<view wx:if="{{suggestionIndex<4}}">
+					<view>
+						{{suggestionItem.text}}
+					</view>
+				</view>
+			</view>
+		</view>
+	</view>
+</view>
+

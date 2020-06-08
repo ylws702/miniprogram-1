@@ -1,0 +1,53 @@
+<!--miniprogram/pages/discover/discover.wxml-->
+<view class="main">
+	<view class="section1">
+		<view class="city-wrapper">
+			<view class="city-name">{{cityName}}</view>
+			<view class="city-select-img"></view>
+		</view>
+		<view class="search-wrapper" bindtap="onSearchInputTap">
+			<input
+			 class="search-input"
+			 placeholder="找找群"
+			 value="{{searchValue}}"
+			></input>
+			<icon class="search-icon" type="search"></icon>
+		</view>
+	</view>
+	<view class="section2">
+		<view
+		 wx:for="{{groupData}}"
+		 wx:for-index="groupDataIndex"
+		 wx:for-item="groupDataItem"
+		>
+			<view class="group">
+				<view class="group-image-wrapper">
+					<view class="group-image">
+						<image src="{{groupDataItem.image}}" />
+					</view>
+				</view>
+				<view class="group-title">
+					{{groupDataItem.title}}
+				</view>
+				<view class="group-introduction">
+					{{groupDataItem.introduction}}
+				</view>
+				<view class="group-footer">
+					<view class="user">
+						<image class="user-icon" src="../../images/user.png" />
+						<view class="user-name">
+							{{groupDataItem.user.userName}}
+						</view>
+					</view>
+					<view class="like">
+						<image class="like-icon" src="../../images/heart.png" />
+						<view class="like-number">
+							{{groupDataItem.like}}
+						</view>
+					</view>
+				</view>
+			</view>
+		</view>
+	</view>
+</view>
+

@@ -1,0 +1,45 @@
+{
+  "pages": [
+    "pages/discover/discover",
+    "pages/index/index",
+    "pages/logs/logs",
+    "pages/search/search"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "找找群",
+    "navigationBarTextStyle": "black"
+  },
+  "tabBar": {
+    "color": "#aaa",
+    "selectedColor": "black",
+    "borderStyle": "black",
+    "list": [
+      {
+        "text": "发现",
+        "iconPath": "images/eye.png",
+        "selectedIconPath": "images/eye.png",
+        "pagePath": "pages/discover/discover"
+      },
+      {
+        "text": "发布群",
+        "iconPath": "images/plus.png",
+        "selectedIconPath": "images/plus.png",
+        "pagePath": "pages/index/index"
+      },
+      {
+        "text": "我的",
+        "iconPath": "images/user.png",
+        "selectedIconPath": "images/user.png",
+        "pagePath": "pages/logs/logs"
+      }
+    ]
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "你的位置信息将用于城市定位"
+    }
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}
