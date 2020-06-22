@@ -1,9 +1,13 @@
 {
   "pages": [
+    "pages/mine/mine",
+    "pages/publish/publish",
     "pages/discover/discover",
+    "pages/detail/detail",
+    "pages/group-pending/group-pending",
     "pages/index/index",
-    "pages/logs/logs",
-    "pages/search/search"
+    "pages/search/search",
+    "pages/group-passed/group-passed"
   ],
   "window": {
     "navigationBarBackgroundColor": "#fff",
@@ -17,21 +21,21 @@
     "list": [
       {
         "text": "发现",
-        "iconPath": "images/eye.png",
-        "selectedIconPath": "images/eye.png",
+        "iconPath": "images/nav_ icon_find_n@3x.png",
+        "selectedIconPath": "images/nav_ icon_find_h@3x.png",
         "pagePath": "pages/discover/discover"
       },
       {
         "text": "发布群",
-        "iconPath": "images/plus.png",
-        "selectedIconPath": "images/plus.png",
-        "pagePath": "pages/index/index"
+        "iconPath": "images/nav_ icon_add@3x.png",
+        "selectedIconPath": "images/nav_ icon_add@3x.png",
+        "pagePath": "pages/publish/publish"
       },
       {
         "text": "我的",
-        "iconPath": "images/user.png",
-        "selectedIconPath": "images/user.png",
-        "pagePath": "pages/logs/logs"
+        "iconPath": "images/nav_ icon_me_n@3x.png",
+        "selectedIconPath": "images/nav_ icon_me_h@3x.png",
+        "pagePath": "pages/mine/mine"
       }
     ]
   },

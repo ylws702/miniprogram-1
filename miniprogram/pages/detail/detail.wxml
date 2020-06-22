@@ -1,0 +1,13 @@
+<!--miniprogram/pages/detail/detail.wxml-->
+<text>groupId={{groupId}}</text>
+<mp-gallery
+ show="{{show}}"
+ bindchange="change"
+ binddelete="delete"
+ bindhide="hide"
+ img-urls="{{imgUrls}}"
+ delete
+ hide-on-click="{{true}}"
+ current="1"
+></mp-gallery>
+

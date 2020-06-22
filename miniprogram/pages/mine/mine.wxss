@@ -1,0 +1,30 @@
+/* miniprogram/pages/mine.wxss */
+.box {
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  margin-bottom: 10px;
+}
+.user-icon-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.user-icon {
+  width: 40px;
+  height: 40px;
+}
+.user-name {
+  text-align: center;
+}
+.inner {
+  height: 200px;
+  background-color: red;
+}
+
+.navigator-hover {
+  color: blue;
+}
+.other-navigator-hover {
+  color: red;
+}

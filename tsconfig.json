@@ -18,7 +18,9 @@
     "removeComments": true,
     "pretty": true,
     "strictPropertyInitialization": true,
-    "lib": ["es5"],
+    "lib": [
+      "ESNext"
+    ],
     "typeRoots": [
       "./typings"
     ]

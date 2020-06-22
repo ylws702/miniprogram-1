@@ -10,8 +10,11 @@
   "author": "",
   "license": "",
   "dependencies": {
+    "blueimp-md5": "^2.16.0",
+    "weui-miniprogram": "^1.0.3"
   },
   "devDependencies": {
+    "@types/blueimp-md5": "^2.7.0",
     "miniprogram-api-typings": "^2.8.3-1",
     "typescript": "^3.3.3333"
   }

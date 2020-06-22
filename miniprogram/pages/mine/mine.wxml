@@ -1,0 +1,55 @@
+<!--miniprogram/pages/mine.wxml-->
+<view class="main">
+	<view class="box">
+		<navigator on url="">
+			<view class="user-icon-wrapper">
+				<image class="user-icon" src="{{userIconUrl}}" />
+			</view>
+			<view class="user-name">
+				<block>{{userName}}</block>
+			</view>
+		</navigator>
+		<button
+		 class="weui-btn"
+		 type="default"
+		 open-type="getUserInfo"
+		 hidden="{{HideGetUserInfoBtn}}"
+		>点击登录
+		</button>
+	</view>
+	<view class="btn-area">
+		<view class="weui-panel__ft">
+			<navigator url="../group-passed/group-passed">
+				<view class="weui-cell weui-cell_access weui-cell_link">
+					<view class="weui-cell__bd weui-cell_primary">已创建成功的群 ({{passedCount}})</view>
+					<view class="weui-cell__ft weui-cell__ft_in-access"></view>
+				</view>
+			</navigator>
+		</view>
+		<view class="weui-panel__ft">
+			<view class="weui-cell weui-cell_access weui-cell_link">
+				<view class="weui-cell__bd weui-cell_primary">正在申请中的群 ({{pendingCount}})</view>
+				<view class="weui-cell__ft weui-cell__ft_in-access"></view>
+			</view>
+		</view>
+		<view class="weui-panel__ft">
+			<view class="weui-cell weui-cell_access weui-cell_link">
+				<view class="weui-cell__bd weui-cell_primary">已拒绝的群 ({{rejectedCount}})</view>
+				<view class="weui-cell__ft weui-cell__ft_in-access"></view>
+			</view>
+		</view>
+		<view class="weui-panel__ft">
+			<view class="weui-cell weui-cell_access weui-cell_link">
+				<view class="weui-cell__bd weui-cell_primary">评论管理 ({{reviewCount}})</view>
+				<view class="weui-cell__ft weui-cell__ft_in-access"></view>
+			</view>
+		</view>
+		<!-- <navigator
+		 url="../../redirect/redirect/redirect?title=redirect"
+		 open-type="redirect"
+		 hover-class="other-navigator-hover"
+		>在当前页打开
+		</navigator> -->
+	</view>
+</view>
+

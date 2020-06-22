@@ -16,6 +16,7 @@
 	</view>
 	<view class="section2">
 		<view
+		 wx:key="groupId"
 		 wx:for="{{groupData}}"
 		 wx:for-index="groupDataIndex"
 		 wx:for-item="groupDataItem"

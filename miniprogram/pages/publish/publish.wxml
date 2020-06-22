@@ -1,0 +1,76 @@
+<!--miniprogram/pages/publish/publish.wxml-->
+<view class="page" data-weui-theme="{{theme}}">
+	<mp-cells title="一个有吸引力的标题会让更多人的关注到你">
+		<mp-cell title="" ext-class="">
+			<input class="weui-input" placeholder="请填写标题:" />
+		</mp-cell>
+	</mp-cells>
+	<mp-cells title="简介">
+		<mp-cell
+		 has-header="{{false}}"
+		 has-footer="{{false}}"
+		 title=""
+		 ext-class=""
+		>
+			<textarea
+			 class="weui-textarea"
+			 placeholder="请填写简介"
+			 style="height: 4em"
+			/>
+			</mp-cell>
+    </mp-cells>
+    <mp-cells>
+        <mp-cell>
+            <mp-uploader 
+            bindfail="uploadError" 
+            bindsuccess="uploadSuccess" 
+            select="{{selectFile}}" 
+            upload="{{uplaodPhotos}}" 
+            files="{{photos}}" 
+            delete="true"
+            max-count="3" 
+            title="照片上传" 
+            tips="最多上传三张照片，默认第一张照片为封面图，建议尺寸 XXX*XXX">
+            </mp-uploader>
+        </mp-cell>
+    </mp-cells>
+	<mp-cells title="">
+		<mp-cell title="" ext-class="">
+			<input class="weui-input" placeholder="申请人姓名" />
+		</mp-cell>
+		<mp-cell title="" ext-class="">
+			<input class="weui-input" placeholder="申请人手机" />
+		</mp-cell>
+	</mp-cells>
+	<mp-cells title="">
+		<mp-cell title="" ext-class="">
+            <mp-uploader 
+            bindfail="uploadError" 
+            bindsuccess="uploadSuccess" 
+            select="{{selectFile}}" 
+            upload="{{uplaodGroupQrCode}}" 
+            files="{{groupQrCode}}" 
+            max-count="1" 
+            title="上传你的群二维码" 
+            tips="">
+            </mp-uploader>
+		</mp-cell>
+		<mp-cell title="" ext-class="">
+            <mp-uploader 
+            bindfail="uploadError" 
+            bindsuccess="uploadSuccess" 
+            select="{{selectFile}}" 
+            upload="{{uplaodPersonalQrCode}}" 
+            files="{{personalQrCode}}" 
+            max-count="1" 
+            title="上传你的个人二维码" 
+            tips="">
+            </mp-uploader>
+		</mp-cell>
+	</mp-cells>
+    
+    <view slot="button">
+        <button class="weui-btn" type="primary" bindtap="submitForm">确定</button>
+    </view>
+</view>
+

@@ -9,8 +9,8 @@
 	"projectname": "miniprogram-1",
 	"scripts": {
 		"beforeCompile": "npm run tsc",
-		"beforePreview": "npm run tsc",
-		"beforeUpload": "npm run tsc"
+		"beforePreview": "",
+		"beforeUpload": ""
 	},
 	"setting": {
 		"urlCheck": true,
@@ -19,14 +19,25 @@
 		"preloadBackgroundData": false,
 		"minified": true,
 		"newFeature": true,
-		"autoAudits": false,
 		"coverView": true,
+		"autoAudits": false,
 		"showShadowRootInWxmlPanel": true,
 		"scopeDataCheck": false,
-		"useCompilerModule": false
+		"checkInvalidKey": true,
+		"checkSiteMap": true,
+		"uploadWithSourceMap": true,
+		"babelSetting": {
+			"ignore": [],
+			"disablePlugins": [],
+			"outputPath": ""
+		},
+		"useCompilerModule": false,
+		"userConfirmedUseCompilerModuleSwitch": false
 	},
 	"simulatorType": "wechat",
 	"simulatorPluginLibVersion": {},
 	"appid": "wx114af23169f4b7a1",
+	"cloudfunctionRoot": "cloudfunction/",
+	"cloudfunctionTemplateRoot": "cloudfunctionTemplate",
 	"condition": {}
 }
