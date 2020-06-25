@@ -1,9 +1,9 @@
 {
   "pages": [
     "pages/discover/discover",
+    "pages/search/search",
     "pages/detail/detail",
     "pages/publish/publish",
-    "pages/search/search",
     "pages/mine/mine",
     "pages/group-pending/group-pending",
     "pages/index/index",

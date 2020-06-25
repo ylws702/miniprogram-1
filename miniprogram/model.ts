@@ -7,10 +7,13 @@ export interface IAppOption {
       city: string;
       cityId: string;
     };
-    searchText?: string;
     tabPublishQuery?: {
       groupId: string;
     };
+    tabDiscoverQuery?: {
+      searchText: string;
+    };
+    likeRecord: Record<string, boolean | undefined>;
   };
   userInfoReadyCallback?: WechatMiniprogram.GetUserInfoSuccessCallback;
 }
@@ -63,16 +66,16 @@ export interface User {
   userIcon: string;
 }
 
-export interface Event<D = {}> {
+export interface Event<Detail = {}, DataSet extends Record<string, any> = {}> {
   type: string;
   timeStamp: number;
   target: {
     id: string;
-    dataset: Record<string, any>;
+    dataset: DataSet;
   };
   currentTarget: {
     id: string;
-    dataset: Record<string, any>;
+    dataset: DataSet;
   };
-  detail: D;
+  detail: Detail;
 }

@@ -1,4 +1,5 @@
 {
-    "usingComponents": {},
-    "navigationBarTitleText": "找找群"
+  "usingComponents": {},
+  "enablePullDownRefresh": true,
+  "navigationBarTitleText": "找找群"
 }

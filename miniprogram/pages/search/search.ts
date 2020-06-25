@@ -1,6 +1,8 @@
 // miniprogram/pages/search/search.js
 
-import { IAppOption } from "../../model";
+import { Event, IAppOption } from "../../model";
+import { toastError } from "../../utils/util";
+import { searchGroups } from "../../services/group";
 
 const key_recentSearch = "recentSearch";
 
@@ -42,14 +44,20 @@ const data: Data = {
   ],
 };
 
-const app_search = getApp<IAppOption>();
+export const app = getApp<IAppOption>();
+
+interface Option {
+  text: string;
+  value: string | number;
+}
+
 Page({
   data,
   onLoad() {
     const that = this;
-    if (app_search.globalData.searchText) {
-      this.data.searchValue = app_search.globalData.searchText;
-    }
+    this.setData({
+      search: this.search.bind(this),
+    });
     wx.getStorage({
       key: key_recentSearch,
       success(res) {
@@ -59,29 +67,44 @@ Page({
       },
     });
   },
-  search: function () {
-    return new Promise((resolve) => {
-      if (this.data.i % 2 === 0) {
-        setTimeout(() => {
-          resolve([
-            { text: "搜索结果", value: 1 },
-            { text: "搜索结果2", value: 2 },
-          ]);
-        }, 200);
-      } else {
-        setTimeout(() => {
-          resolve([]);
-        }, 200);
-      }
-      this.setData({
-        i: this.data.i + 1,
-      });
+
+  async search(title: string): Promise<Option[]> {
+    const { location } = app.globalData;
+    if (!location) {
+      const errMsg = "没有城市信息";
+      toastError(errMsg);
+      return Promise.reject(errMsg);
+    }
+    const { cityId } = location;
+    const groups = await searchGroups({
+      cityId,
+      title,
     });
+    console.log(title, groups);
+    const result: Option[] = groups
+      .slice(0, 3)
+      .map((group) => ({ text: group.title, value: group.groupId }));
+    app.globalData.tabDiscoverQuery = {
+      searchText: title,
+    };
+    result.push({ text: "查看全部结果", value: 0 });
+    return result;
   },
-  searchInputEvent(event: {
-    detail: { value: any; cursor: any; keyCode: any };
-  }) {
-    app_search.globalData.searchText = event.detail.value;
+  selectResult(e: Event<{ index: number; item: Option }>) {
+    const { value } = e.detail.item;
+    if (value === 0) {
+      wx.switchTab({
+        url: "../discover/discover",
+        success() {
+          const pages = getCurrentPages();
+          pages[pages.length - 1].onLoad();
+        },
+      });
+      return;
+    }
+    wx.navigateTo({
+      url: `../detail/detail?groupId=${value}`,
+    });
   },
   clearRecent() {
     wx.removeStorage({

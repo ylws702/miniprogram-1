@@ -24,9 +24,7 @@
 			<navigator url="../detail/detail?groupId={{groupDataItem.groupId}}">
 				<view class="group">
 					<view class="group-image-wrapper">
-						<view class="group-image">
-							<image src="{{groupDataItem.image}}" />
-						</view>
+						<image class="group-image" src="{{groupDataItem.images[0]}}" />
 					</view>
 					<view class="group-title">
 						{{groupDataItem.title}}
@@ -38,11 +36,15 @@
 						<view class="user">
 							<image class="user-icon" src="../../images/user.png" />
 							<view class="user-name">
-								{{groupDataItem.user.userName}}
+								{{groupDataItem.masterName}}
 							</view>
 						</view>
-						<view class="like">
-							<image class="like-icon" src="../../images/heart.png" />
+						<view
+						 catchtap="onLikeTap"
+						 data-groupid="{{groupDataItem.groupId}}"
+						 class="like"
+						>
+							<image class="like-icon" src="{{groupDataItem.ifLike ? '../../images/icon_praise_h@3x.png' : '../../images/icon_praise_n@3x.png'}}" />
 							<view class="like-number">
 								{{groupDataItem.like}}
 							</view>

@@ -86,3 +86,22 @@ export async function addGroup(params: AddGroupParams) {
   };
   await db_group.add({ data });
 }
+
+export interface UpdateLikeByGroupIdParams {
+  dLike: number;
+  groupId: string;
+}
+
+export async function updateLikeByGroupId(
+  params: UpdateLikeByGroupIdParams
+): Promise<void> {
+  const group: any = await getGroupByGroupId(params.groupId);
+  if (!group) {
+    return Promise.reject("没有该groupId");
+  }
+  await db_group.doc(group._id).update({
+    data: {
+      like: group.like + params.dLike,
+    },
+  });
+}

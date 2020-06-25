@@ -1,6 +1,6 @@
 // miniprogram/pages/detail/detail.js
 
-import { Group, User, IAppOption } from "../../model";
+import { Group, User, IAppOption, GroupStatus } from "../../model";
 import {
   defaultGroup,
   defaultUser,
@@ -44,7 +44,12 @@ Page({
         toastError("该群信息不存在");
         return;
       }
-      const { images, masterId } = group;
+      const { images, masterId, status } = group;
+      if (status === GroupStatus.Pending) {
+        wx.setNavigationBarTitle({
+          title: "群详情页（申请中）",
+        });
+      }
       const userId = app_detail.globalData.user?.userId;
       if (images.length === 0) {
         images.push(defaultGroupImage);
@@ -71,7 +76,6 @@ Page({
     })();
   },
   edit() {
-    console.log("123");
     app_detail.globalData.tabPublishQuery = {
       groupId: this.data.group.groupId,
     };

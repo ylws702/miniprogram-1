@@ -1,7 +1,11 @@
 <!--miniprogram/pages/search/search.wxml-->
 <view class="main">
 	<view class="section1">
-		<mp-searchbar bindselectresult="selectResult" search="{{search}}"></mp-searchbar>
+		<mp-searchbar
+		 bindselectresult="selectResult"
+		 search="{{search}}"
+		 focus="{{true}}"
+		></mp-searchbar>
 		<!-- <view class="search-wrapper" bindtap="onSearchInputTap">
 			<input
 			 class="search-input"
