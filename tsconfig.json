@@ -19,7 +19,7 @@
     "pretty": true,
     "strictPropertyInitialization": true,
     "lib": [
-      "ESNext"
+      "ES2015"
     ],
     "typeRoots": [
       "./typings"

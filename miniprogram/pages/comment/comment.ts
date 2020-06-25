@@ -1,15 +1,19 @@
+// miniprogram/pages/comment/comment.js
 // miniprogram/pages/group-pending/group-pending.js
 import { getGroupsByUserId } from "../../services/group";
-import { GroupStatus, IAppOption, Group } from "../../model";
+import { GroupStatus, IAppOption } from "../../model";
 import { toastError } from "../../utils/util";
 
 // mine.ts
 export interface Data {
-  groupData: Group[];
+  commentData: {
+    groupTitle: string;
+    newCommentsCount: string;
+  }[];
 }
 
 const data: Data = {
-  groupData: [],
+  commentData: [],
 };
 
 const app_group_pending = getApp<IAppOption>();

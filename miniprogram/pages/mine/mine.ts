@@ -1,6 +1,7 @@
 import { getGroupCountByUserId } from "../../services/group";
 import { getUserId } from "../../services/cloud";
 import { getUserByUserId, addUser } from "../../services/user";
+import { GroupStatus, IAppOption } from "../../model";
 
 // mine.ts
 export interface Data {
@@ -39,28 +40,44 @@ Page({
     const initUserData = async (userInfo: WechatMiniprogram.UserInfo) => {
       const userId = (await getUserId()).openid;
       (async () => {
+        // TODO:更新用户信息
         const user = await getUserByUserId(userId);
         const { nickName, avatarUrl } = userInfo;
+        app_mine.globalData.user = {
+          userId,
+          userName: nickName,
+          userIcon: avatarUrl,
+        };
         that.setData({
           userName: nickName,
           userIconUrl: avatarUrl,
           HideGetUserInfoBtn: true,
         });
-        if (user.length === 0) {
-          await addUser({ userId, userName: nickName });
+        if (!user) {
+          console.log({ userId, userName: nickName });
+          await addUser({ userId, userName: nickName, userIcon: avatarUrl });
           return;
         }
         (async () =>
           that.setData({
-            passedCount: await getGroupCountByUserId(userId, "Passed"),
+            passedCount: await getGroupCountByUserId(
+              userId,
+              GroupStatus.Passed
+            ),
           }))();
         (async () =>
           that.setData({
-            pendingCount: await getGroupCountByUserId(userId, "Pending"),
+            pendingCount: await getGroupCountByUserId(
+              userId,
+              GroupStatus.Pending
+            ),
           }))();
         (async () =>
           that.setData({
-            rejectedCount: await getGroupCountByUserId(userId, "Rejected"),
+            rejectedCount: await getGroupCountByUserId(
+              userId,
+              GroupStatus.Rejected
+            ),
           }))();
       })();
     };

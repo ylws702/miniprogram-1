@@ -1,13 +1,57 @@
 <!--miniprogram/pages/detail/detail.wxml-->
-<text>groupId={{groupId}}</text>
-<mp-gallery
- show="{{show}}"
- bindchange="change"
- binddelete="delete"
- bindhide="hide"
- img-urls="{{imgUrls}}"
- delete
- hide-on-click="{{true}}"
- current="1"
-></mp-gallery>
+<view class="section1">
+	<scroll-view style="height:200px">
+		<view class="swiper">
+			<swiper
+			 class="swiper-box"
+			 indicator-dots="{{true}}"
+			 autoplay="{{true}}"
+			 interval="3000"
+			 duration="500"
+			 indicator-color="dimgray"
+			 indicator-active-color="red"
+			>
+				<block wx:for-items="{{group.images}}">
+					<navigator url="../blogList/blogList">
+						<swiper-item>
+							<block wx:if="{{item}}">
+								<image src="{{item}}" mode="aspectFill" />
+							</block>
+							<block wx:else>
+								<image src="../../images/default_pic.png" mode="aspectFill"></image>
+							</block>
+						</swiper-item>
+					</navigator>
+				</block>
+			</swiper>
+		</view>
+	</scroll-view>
+</view>
+<view class="section2">
+	<view class="title-wrapper">
+		<view class="title">{{group.title}}</view>
+		<image
+		 class="edit-icon"
+		 src="../../images/icon_edit@3x.png"
+		 hidden="{{hiddenEditIcon}}"
+		 bindtap="edit"
+		/>
+	</view>
+	<view class="group-info-wrapper">
+		<view class="creater">
+			创建人：
+			<image class="caeater-icon" src="{{user.userIcon}}" />
+			{{user.userName}}
+		</view>
+		<view class="create-time">时间：{{createTime}}</view>
+	</view>
+	<view class="city">地点：{{cityName}}</view>
+	<view class="introduction">{{group.introduction}}</view>
+	<view class="container">
+		<view>扫码进群</view>
+		<image class="qr-code" src="{{group.groupQrCode}}" />
+		<view>加群主微信进群</view>
+		<image class="qr-code" src="{{group.personalQrCode}}" />
+	</view>
+</view>
 

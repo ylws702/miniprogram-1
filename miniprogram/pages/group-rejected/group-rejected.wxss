@@ -1,0 +1,4 @@
+/* pages/group-rejected/group-rejected.wxss */
+.reject-reason {
+  color: red;
+}

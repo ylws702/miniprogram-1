@@ -21,33 +21,35 @@
 		 wx:for-index="groupDataIndex"
 		 wx:for-item="groupDataItem"
 		>
-			<view class="group">
-				<view class="group-image-wrapper">
-					<view class="group-image">
-						<image src="{{groupDataItem.image}}" />
-					</view>
-				</view>
-				<view class="group-title">
-					{{groupDataItem.title}}
-				</view>
-				<view class="group-introduction">
-					{{groupDataItem.introduction}}
-				</view>
-				<view class="group-footer">
-					<view class="user">
-						<image class="user-icon" src="../../images/user.png" />
-						<view class="user-name">
-							{{groupDataItem.user.userName}}
+			<navigator url="../detail/detail?groupId={{groupDataItem.groupId}}">
+				<view class="group">
+					<view class="group-image-wrapper">
+						<view class="group-image">
+							<image src="{{groupDataItem.image}}" />
 						</view>
 					</view>
-					<view class="like">
-						<image class="like-icon" src="../../images/heart.png" />
-						<view class="like-number">
-							{{groupDataItem.like}}
+					<view class="group-title">
+						{{groupDataItem.title}}
+					</view>
+					<view class="group-introduction">
+						{{groupDataItem.introduction}}
+					</view>
+					<view class="group-footer">
+						<view class="user">
+							<image class="user-icon" src="../../images/user.png" />
+							<view class="user-name">
+								{{groupDataItem.user.userName}}
+							</view>
+						</view>
+						<view class="like">
+							<image class="like-icon" src="../../images/heart.png" />
+							<view class="like-number">
+								{{groupDataItem.like}}
+							</view>
 						</view>
 					</view>
 				</view>
-			</view>
+			</navigator>
 		</view>
 	</view>
 </view>

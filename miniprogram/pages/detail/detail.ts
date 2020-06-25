@@ -1,72 +1,82 @@
 // miniprogram/pages/detail/detail.js
 
+import { Group, User, IAppOption } from "../../model";
+import {
+  defaultGroup,
+  defaultUser,
+  formatTime,
+  loading,
+  defaultGroupImage,
+  toastError,
+} from "../../utils/util";
+import { getGroupByGroupId } from "../../services/group";
+import { getUserByUserId } from "../../services/user";
+import { getCityInfoByCityId } from "../../services/city";
+
+export interface Data {
+  group: Group;
+  user: User;
+  createTime: string;
+  cityName: string;
+  hiddenEditIcon: boolean;
+}
+
+const data: Data = {
+  group: defaultGroup,
+  user: defaultUser,
+  createTime: loading,
+  cityName: loading,
+  hiddenEditIcon: true,
+};
 const app_detail = getApp<IAppOption>();
+
 Page({
-  data: {
-    imgUrls: [
-      'http://desk-fd.zol-img.com.cn/g5/M00/02/05/ChMkJ1bKyZmIWCwZABEwe5zfvyMAALIQABa1z4AETCT730.jpg',
-      'http://desk-fd.zol-img.com.cn/g5/M00/02/05/ChMkJ1bKyZmIWCwZABEwe5zfvyMAALIQABa1z4AETCT730.jpg',
-      'http://desk-fd.zol-img.com.cn/g5/M00/02/05/ChMkJ1bKyZmIWCwZABEwe5zfvyMAALIQABa1z4AETCT730.jpg'
-    ],
-    groupData: app_detail.globalData.groupData,
-    groupId: '1',
+  data,
+  onLoad: function (query) {
+    const that = this;
+    const { groupId } = query;
+    if (!groupId) {
+      return;
+    }
+    (async () => {
+      const group = await getGroupByGroupId(groupId);
+      if (!group) {
+        toastError("该群信息不存在");
+        return;
+      }
+      const { images, masterId } = group;
+      const userId = app_detail.globalData.user?.userId;
+      if (images.length === 0) {
+        images.push(defaultGroupImage);
+      }
+      that.setData({
+        group,
+        createTime: formatTime(group.createTime),
+        hiddenEditIcon: !(userId && masterId === userId),
+      });
+      (async () => {
+        const { masterId } = group;
+        const user = await getUserByUserId(masterId);
+        that.setData({
+          user,
+        });
+      })();
+      (async () => {
+        const { cityId } = group;
+        const cityInfo = await getCityInfoByCityId(cityId);
+        that.setData({
+          cityName: cityInfo ? cityInfo.city : "未知",
+        });
+      })();
+    })();
   },
-
-  /**
-   * Lifecycle function--Called when page load
-   */
-  onLoad: function () {
-    // const groupId = options.groupId;
-    // const imgUrls = app_detail.globalData.groupData.filter(group => group.groupId === groupId)[0]?.images;
-    const imgUrls=[
-      'http://desk-fd.zol-img.com.cn/g5/M00/02/05/ChMkJ1bKyZmIWCwZABEwe5zfvyMAALIQABa1z4AETCT730.jpg',
-      'http://desk-fd.zol-img.com.cn/g5/M00/02/05/ChMkJ1bKyZmIWCwZABEwe5zfvyMAALIQABa1z4AETCT730.jpg',
-      'http://desk-fd.zol-img.com.cn/g5/M00/02/05/ChMkJ1bKyZmIWCwZABEwe5zfvyMAALIQABa1z4AETCT730.jpg'
-    ];
-    this.setData({  imgUrls });
+  edit() {
+    console.log("123");
+    app_detail.globalData.tabPublishQuery = {
+      groupId: this.data.group.groupId,
+    };
+    wx.switchTab({
+      url: "../publish/publish",
+    });
   },
-
-  /**
-   * Lifecycle function--Called when page is initially rendered
-   */
-  onReady: function () {
-
-  },
-
-  /**
-   * Lifecycle function--Called when page show
-   */
-  onShow: function () {
-
-  },
-
-  /**
-   * Lifecycle function--Called when page hide
-   */
-  onHide: function () {
-
-  },
-
-  /**
-   * Lifecycle function--Called when page unload
-   */
-  onUnload: function () {
-
-  },
-
-  /**
-   * Page event handler function--Called when user drop down
-   */
-  onPullDownRefresh: function () {
-
-  },
-
-  /**
-   * Called when page reach bottom
-   */
-  onReachBottom: function () {
-
-  },
-
-
-})
+});

@@ -1,4 +1,5 @@
 import initCloud from "./services/cloud";
+import { IAppOption } from "./model";
 
 // app.ts
 App<IAppOption>({

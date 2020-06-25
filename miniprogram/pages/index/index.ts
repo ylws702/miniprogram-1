@@ -1,4 +1,7 @@
 // index.ts
+
+import { IAppOption } from "../../model"
+
 // 获取应用实例
 const app = getApp<IAppOption>()
 

@@ -1,4 +1,4 @@
-// miniprogram/pages/group-pending/group-pending.js
+// pages/group-rejected/group-rejected.js
 import { getGroupsByUserId } from "../../services/group";
 import { GroupStatus, IAppOption, Group } from "../../model";
 import { toastError } from "../../utils/util";
@@ -24,8 +24,8 @@ Page({
         toastError("没有用户信息");
         return;
       }
-      const groupData = await getGroupsByUserId(userId, GroupStatus.Pending);
-      console.log("pending groupData", groupData);
+      const groupData = await getGroupsByUserId(userId, GroupStatus.Rejected);
+      console.log("Rejected groupData", groupData);
       that.setData({
         groupData,
       });

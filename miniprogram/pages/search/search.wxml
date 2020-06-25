@@ -1,7 +1,8 @@
 <!--miniprogram/pages/search/search.wxml-->
 <view class="main">
 	<view class="section1">
-		<view class="search-wrapper" bindtap="onSearchInputTap">
+		<mp-searchbar bindselectresult="selectResult" search="{{search}}"></mp-searchbar>
+		<!-- <view class="search-wrapper" bindtap="onSearchInputTap">
 			<input
 			 class="search-input"
 			 placeholder="{{hotSearchValue}}"
@@ -9,14 +10,18 @@
 			 bindinput="{{searchInputEvent}}"
 			></input>
 			<icon class="search-icon" type="search"></icon>
-		</view>
+		</view> -->
 	</view>
 	<view class="section2">
 		<view class="recent-title">
 			<view class="recent-title-text">
 				最近搜索
 			</view>
-			<image src="../../images/trash.png" class="trash-icon" />
+			<image
+			 bindtap="clearRecent"
+			 src="../../images/trash.png"
+			 class="trash-icon"
+			/>
 		</view>
 		<view class="recent-content-wrapper">
 			<view

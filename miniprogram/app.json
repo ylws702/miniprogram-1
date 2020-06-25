@@ -1,13 +1,15 @@
 {
   "pages": [
-    "pages/mine/mine",
-    "pages/publish/publish",
     "pages/discover/discover",
     "pages/detail/detail",
+    "pages/publish/publish",
+    "pages/search/search",
+    "pages/mine/mine",
     "pages/group-pending/group-pending",
     "pages/index/index",
-    "pages/search/search",
-    "pages/group-passed/group-passed"
+    "pages/group-passed/group-passed",
+    "pages/group-rejected/group-rejected",
+    "pages/comment/comment"
   ],
   "window": {
     "navigationBarBackgroundColor": "#fff",

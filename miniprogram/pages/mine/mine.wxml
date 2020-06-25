@@ -27,16 +27,20 @@
 			</navigator>
 		</view>
 		<view class="weui-panel__ft">
-			<view class="weui-cell weui-cell_access weui-cell_link">
-				<view class="weui-cell__bd weui-cell_primary">正在申请中的群 ({{pendingCount}})</view>
-				<view class="weui-cell__ft weui-cell__ft_in-access"></view>
-			</view>
+			<navigator url="../group-pending/group-pending">
+				<view class="weui-cell weui-cell_access weui-cell_link">
+					<view class="weui-cell__bd weui-cell_primary">正在申请中的群 ({{pendingCount}})</view>
+					<view class="weui-cell__ft weui-cell__ft_in-access"></view>
+				</view>
+			</navigator>
 		</view>
 		<view class="weui-panel__ft">
-			<view class="weui-cell weui-cell_access weui-cell_link">
-				<view class="weui-cell__bd weui-cell_primary">已拒绝的群 ({{rejectedCount}})</view>
-				<view class="weui-cell__ft weui-cell__ft_in-access"></view>
-			</view>
+			<navigator url="../group-rejected/group-rejected">
+				<view class="weui-cell weui-cell_access weui-cell_link">
+					<view class="weui-cell__bd weui-cell_primary">已拒绝的群 ({{rejectedCount}})</view>
+					<view class="weui-cell__ft weui-cell__ft_in-access"></view>
+				</view>
+			</navigator>
 		</view>
 		<view class="weui-panel__ft">
 			<view class="weui-cell weui-cell_access weui-cell_link">

@@ -1,1 +1,42 @@
 /* miniprogram/pages/detail/detail.wxss */
+.swiper {
+  height: 200px;
+}
+.swiper-box {
+  height: 200px;
+}
+.title-wrapper {
+  display: grid;
+  grid-template-columns: 1fr auto;
+}
+.title {
+  font-size: large;
+  font-weight: bold;
+}
+.edit-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  grid-column: 2;
+}
+.group-info-wrapper {
+  display: grid;
+  grid-template-columns: auto auto;
+}
+.creater {
+  display: inline;
+}
+.create-time {
+  grid-column: 2;
+}
+.caeater-icon {
+  height: 1em;
+  width: 1em;
+}
+.introduction {
+  border-top: 2px solid black;
+  border-bottom: 2px solid black;
+}
+.qr-code {
+  width: 200px;
+  height: 200px;
+}

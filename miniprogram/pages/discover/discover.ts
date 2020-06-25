@@ -1,5 +1,8 @@
 import { getCity } from "../../services/map";
 import { getCityId } from "../../services/city";
+import { Group, IAppOption } from "../../model";
+import { getGroupsByCityId } from "../../services/group";
+import { toastError } from "../../utils/util";
 
 const app_discover = getApp<IAppOption>();
 
@@ -36,23 +39,29 @@ Page({
       };
     }
     if (!app_discover.globalData.location) {
-      wx.showLoading({
-        title: "正在获取定位",
-      });
-      getCity()
-        .then((value) => {
-          const { province, city } = value;
-          return getCityId(city, province).then((cityInfo) => {
-            app_discover.globalData.location = cityInfo;
-            console.log(cityInfo);
-            that.setData({
-              cityName: cityInfo.city,
-            });
-          }, console.error);
-        }, console.error)
-        .finally(() => {
+      (async () => {
+        try {
+          wx.showLoading({
+            title: "正在获取定位",
+          });
+          const city = await getCity();
+          const cityInfo = await getCityId(city);
+          const { cityId } = cityInfo;
+          app_discover.globalData.location = cityInfo;
+          console.log(cityInfo);
+          that.setData({
+            cityName: cityInfo.city,
+          });
+          const groupData = await getGroupsByCityId({ cityId });
+          that.setData({ groupData });
+        } catch (error) {
           wx.hideLoading();
-        });
+          console.error(error);
+          toastError("获取定位失败");
+        } finally {
+          wx.hideLoading();
+        }
+      })();
     }
     if (app_discover.globalData.searchText) {
       this.data.searchValue = app_discover.globalData.searchText;

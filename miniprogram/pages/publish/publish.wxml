@@ -1,8 +1,14 @@
 <!--miniprogram/pages/publish/publish.wxml-->
 <view class="page" data-weui-theme="{{theme}}">
+	<input value="{{value}}" />
 	<mp-cells title="一个有吸引力的标题会让更多人的关注到你">
 		<mp-cell title="" ext-class="">
-			<input class="weui-input" placeholder="请填写标题:" />
+			<input
+			 class="weui-input"
+			 placeholder="请填写标题:"
+			 value="{{title}}"
+			 bindinput="titleInput"
+			/>
 		</mp-cell>
 	</mp-cells>
 	<mp-cells title="简介">
@@ -15,6 +21,8 @@
 			<textarea
 			 class="weui-textarea"
 			 placeholder="请填写简介"
+			 value="{{introduction}}"
+			 bindinput="introductionInput"
 			 style="height: 4em"
 			/>
 			</mp-cell>
@@ -23,11 +31,11 @@
         <mp-cell>
             <mp-uploader 
             bindfail="uploadError" 
-            bindsuccess="uploadSuccess" 
-            select="{{selectFile}}" 
+			bindsuccess="uploadSuccess" 
+			binddelete="deletePhotos"
             upload="{{uplaodPhotos}}" 
             files="{{photos}}" 
-            delete="true"
+            delete="{{true}}"
             max-count="3" 
             title="照片上传" 
             tips="最多上传三张照片，默认第一张照片为封面图，建议尺寸 XXX*XXX">
@@ -36,10 +44,10 @@
     </mp-cells>
 	<mp-cells title="">
 		<mp-cell title="" ext-class="">
-			<input class="weui-input" placeholder="申请人姓名" />
+			<input class="weui-input" placeholder="申请人姓名" value="{{masterName}}" bindinput="masterNameInput"/>
 		</mp-cell>
 		<mp-cell title="" ext-class="">
-			<input class="weui-input" placeholder="申请人手机" />
+			<input class="weui-input" placeholder="申请人手机" value="{{masterPhone}}" bindinput="masterPhoneInput" />
 		</mp-cell>
 	</mp-cells>
 	<mp-cells title="">
@@ -47,10 +55,10 @@
             <mp-uploader 
             bindfail="uploadError" 
             bindsuccess="uploadSuccess" 
-            select="{{selectFile}}" 
+			binddelete="deleteGroupQrCode"
             upload="{{uplaodGroupQrCode}}" 
-            files="{{groupQrCode}}" 
-            max-count="1" 
+			files="{{groupQrCode}}" 
+            delete="{{true}}"
             title="上传你的群二维码" 
             tips="">
             </mp-uploader>
@@ -59,10 +67,10 @@
             <mp-uploader 
             bindfail="uploadError" 
             bindsuccess="uploadSuccess" 
-            select="{{selectFile}}" 
+			binddelete="deletePersonalQrCode"
             upload="{{uplaodPersonalQrCode}}" 
             files="{{personalQrCode}}" 
-            max-count="1" 
+            delete="{{true}}"
             title="上传你的个人二维码" 
             tips="">
             </mp-uploader>

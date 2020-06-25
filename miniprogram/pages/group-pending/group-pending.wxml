@@ -1,2 +1,19 @@
 <!--miniprogram/pages/group-pending/group-pending.wxml-->
-<text>miniprogram/pages/group-pending/group-pending.wxml</text>
+<view class="section1">
+	<view
+	 wx:key="groupId"
+	 wx:for="{{groupData}}"
+	 wx:for-index="groupDataIndex"
+	 wx:for-item="groupDataItem"
+	>
+		<view class="weui-panel__ft">
+			<navigator url="../detail/detail?groupId={{groupDataItem.groupId}}">
+				<view class="weui-cell weui-cell_access weui-cell_link">
+					<view class="weui-cell__bd weui-cell_primary">{{groupDataItem.title}}</view>
+					<view class="weui-cell__ft weui-cell__ft_in-access"></view>
+				</view>
+			</navigator>
+		</view>
+	</view>
+</view>
+
