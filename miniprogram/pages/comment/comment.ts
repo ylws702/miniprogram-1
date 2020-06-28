@@ -1,15 +1,12 @@
 // miniprogram/pages/comment/comment.js
 // miniprogram/pages/group-pending/group-pending.js
-import { getGroupsByUserId } from "../../services/group";
-import { GroupStatus, IAppOption } from "../../model";
+import { IAppOption, Comment } from "../../model";
 import { toastError } from "../../utils/util";
+import { getCommentsByUserId } from "../../services/comment";
 
 // mine.ts
 export interface Data {
-  commentData: {
-    groupTitle: string;
-    newCommentsCount: string;
-  }[];
+  commentData: Comment[];
 }
 
 const data: Data = {
@@ -23,15 +20,15 @@ Page({
   onLoad() {
     const that = this;
     (async () => {
-      const userId = app_group_pending.globalData?.user?.userId;
+      const userId = app_group_pending.globalData?.user?._id;
       if (!userId) {
         toastError("没有用户信息");
         return;
       }
-      const groupData = await getGroupsByUserId(userId, GroupStatus.Pending);
-      console.log("pending groupData", groupData);
+      const commentData = await getCommentsByUserId(userId);
+      console.log("pending commentData", commentData);
       that.setData({
-        groupData,
+        commentData,
       });
     })();
   },

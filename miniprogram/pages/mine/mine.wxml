@@ -43,10 +43,12 @@
 			</navigator>
 		</view>
 		<view class="weui-panel__ft">
-			<view class="weui-cell weui-cell_access weui-cell_link">
-				<view class="weui-cell__bd weui-cell_primary">评论管理 ({{reviewCount}})</view>
-				<view class="weui-cell__ft weui-cell__ft_in-access"></view>
-			</view>
+			<navigator url="../comment/comment">
+				<view class="weui-cell weui-cell_access weui-cell_link">
+					<view class="weui-cell__bd weui-cell_primary">评论管理 ({{reviewCount}})</view>
+					<view class="weui-cell__ft weui-cell__ft_in-access"></view>
+				</view>
+			</navigator>
 		</view>
 		<!-- <navigator
 		 url="../../redirect/redirect/redirect?title=redirect"

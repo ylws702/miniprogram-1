@@ -50,8 +50,54 @@
 	<view class="container">
 		<view>扫码进群</view>
 		<image class="qr-code" src="{{group.groupQrCode}}" />
-		<view>加群主微信进群</view>
-		<image class="qr-code" src="{{group.personalQrCode}}" />
+		<view class="container" hidden="{{hiddenPersonalQrCode}}">
+			<view>加群主微信进群</view>
+			<image class="qr-code" src="{{group.personalQrCode}}" />
+		</view>
 	</view>
+
+	<view
+	 wx:for="{{comments}}"
+	 class='shoppcall comment'
+	 data-id="{{item.commentId}}"
+	>
+		<view class='publish'>
+			<image src='https://storage.confolsc.com/storage/image/9f37e8a1fadc7ee20964dd6de7edeb4dbb4b03a1?size=130，130&t=1&redirect=1'></image>
+			<view class='publish_list'>
+				<text class='publish_list_item'>{{item.user.userName}}</text>
+				<view class='like'>
+					<text class='publish_time'>{{item.createTime}}</text>
+					<view
+					 class='like_num_list'
+					 bindtap='bindlike'
+					 data-id='{{index}}'
+					>
+						<!-- <text class='iconfont icon-dianzan2' style='{{item.likes.iszan?"color:red":"color:black"}}'></text> -->
+
+						<text class='like_num'>{{item.like}}</text>
+					</view>
+				</view>
+				<text class='redtree_text'>{{item.content}}</text>
+			</view>
+		</view>
+	</view>
+	<view wx:if='{{comments.length == 0}}'>
+		暂无评论
+	</view>
+
+	<mp-cells>
+		<mp-cell title="" ext-class="">
+			<textarea
+			 class="weui-textarea"
+			 placeholder="我要说点啥"
+			 value="{{myComment}}"
+			 bindinput="myCommentInput"
+			/>
+			</mp-cell>
+	</mp-cells>
+	
+    <view slot="button">
+        <button class="weui-btn" type="primary" bindtap="submitComment">回复</button>
+    </view>
 </view>
 

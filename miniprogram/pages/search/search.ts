@@ -10,15 +10,15 @@ export interface Data {
   hotSearchValue: string;
   searchValue: string;
   recentSearch: string[];
+  searchVal: string;
   suggestion: { text: string }[];
-  i: number;
 }
 
 const data: Data = {
   hotSearchValue: "热门搜索:XXXX",
   searchValue: "",
+  searchVal: "124",
   recentSearch: [],
-  i: 0,
   suggestion: [
     {
       text: "关键字XXXXX1",
@@ -55,14 +55,20 @@ Page({
   data,
   onLoad() {
     const that = this;
-    this.setData({
-      search: this.search.bind(this),
+    that.setData({
+      search: that.search.bind(that),
     });
     wx.getStorage({
       key: key_recentSearch,
       success(res) {
         that.setData({
           recentSearch: res.data,
+        });
+      },
+      fail() {
+        wx.setStorage({
+          key: key_recentSearch,
+          data: [],
         });
       },
     });
@@ -78,12 +84,12 @@ Page({
     const { cityId } = location;
     const groups = await searchGroups({
       cityId,
-      title,
+      keyword: title,
     });
     console.log(title, groups);
     const result: Option[] = groups
       .slice(0, 3)
-      .map((group) => ({ text: group.title, value: group.groupId }));
+      .map((group) => ({ text: group.title, value: group._id }));
     app.globalData.tabDiscoverQuery = {
       searchText: title,
     };
@@ -91,6 +97,35 @@ Page({
     return result;
   },
   selectResult(e: Event<{ index: number; item: Option }>) {
+    const that = this;
+    //更新搜索记录
+    if (app.globalData.tabDiscoverQuery) {
+      const { searchText } = app.globalData.tabDiscoverQuery;
+      console.log("更新搜索记录", searchText);
+      wx.getStorage({
+        key: key_recentSearch,
+        success(res) {
+          console.log(res);
+          const recentSearch: string[] = res.data;
+          if (recentSearch.length < 6) {
+            recentSearch.push(searchText);
+            wx.setStorage({
+              key: key_recentSearch,
+              data: recentSearch,
+              success(res) {
+                console.log(res);
+                that.setData({
+                  recentSearch,
+                });
+              },
+              fail: console.log,
+            });
+          }
+        },
+        fail: console.log,
+      });
+    }
+
     const { value } = e.detail.item;
     if (value === 0) {
       wx.switchTab({
@@ -107,11 +142,22 @@ Page({
     });
   },
   clearRecent() {
-    wx.removeStorage({
+    const that = this;
+    that.setData({
+      recentSearch: [],
+    });
+    wx.setStorage({
       key: key_recentSearch,
+      data: [],
       success() {
         console.log("清除成功");
       },
+    });
+  },
+  onRecentSearchTap(e: Event<{}, { text: string }>) {
+    const that = this;
+    that.setData({
+      searchValue: e.currentTarget.dataset.text,
     });
   },
 });

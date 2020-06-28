@@ -1,6 +1,8 @@
 {
   "usingComponents": {
-    "mp-gallery": "../../miniprogram_npm/weui-miniprogram/gallery/gallery"
+    "mp-gallery": "../../miniprogram_npm/weui-miniprogram/gallery/gallery",
+    "mp-cell": "../../miniprogram_npm/weui-miniprogram/cell/cell",
+    "mp-cells": "../../miniprogram_npm/weui-miniprogram/cells/cells"
   },
   "navigationBarTitleText": "群详情页"
 }

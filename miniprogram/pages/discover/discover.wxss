@@ -6,6 +6,15 @@
     display: grid;
     grid-template-columns: max-content auto;
 }
+.city-wrapper{
+    display: flex;
+}
+.city-select-img{
+    margin-top: .5rem;
+    margin-left: .5rem;
+    width: .5rem;
+    height: .5rem;
+}
 .search-wrapper {
     display: grid;
     border: 1px solid #d0d0d0;

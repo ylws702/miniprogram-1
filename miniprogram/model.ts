@@ -30,17 +30,30 @@ export enum GroupStatus {
   "Rejected" = 2,
 }
 
+export enum CommentStatus {
+  "Unread" = 0,
+  "Read" = 1,
+}
+
 export interface Comment {
-  commentID: string;
+  _id: string;
   groupId: string;
   userId: string;
-  time: Date;
+  userName: string;
+  userIcon: string;
+  createTime: Date;
   content: string;
-  comments: Comment[];
+  like: number;
+  replyTo?: {
+    userId: string;
+    read: CommentStatus;
+  };
+  groupMasterRead: CommentStatus;
+  comments: string[];
 }
 
 export type Group = {
-  groupId: string;
+  _id: string;
   cityId: string;
   masterId: string;
   masterName: string;
@@ -52,7 +65,7 @@ export type Group = {
   introduction: string;
   like: number;
   createTime: Date;
-  comments: Comment[];
+  comments: string[];
 } & (
   | {
       status: GroupStatus.Passed | GroupStatus.Pending;
@@ -61,7 +74,7 @@ export type Group = {
 );
 
 export interface User {
-  userId: string;
+  _id: string;
   userName: string;
   userIcon: string;
 }

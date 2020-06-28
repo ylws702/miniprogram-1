@@ -9,7 +9,8 @@
     "pages/index/index",
     "pages/group-passed/group-passed",
     "pages/group-rejected/group-rejected",
-    "pages/comment/comment"
+    "pages/comment/comment",
+    "pages/select-city/select-city"
   ],
   "window": {
     "navigationBarBackgroundColor": "#fff",

@@ -1,5 +1,6 @@
 import db from "./db";
 import { Group, GroupStatus } from "../model";
+import { uuid } from "../utils/util";
 
 const db_group = db.collection("group");
 
@@ -10,6 +11,7 @@ export interface GetGroupsByCityIdParams {
 
 export async function getGroupsByCityId(params: GetGroupsByCityIdParams) {
   const filter: Partial<Group> = params;
+  console.log("getGroupsByCityId", params);
   filter.status ?? (filter.status = GroupStatus.Passed);
   const value = await db_group.where(filter).get();
   return value.data as Group[];
@@ -17,7 +19,7 @@ export async function getGroupsByCityId(params: GetGroupsByCityIdParams) {
 
 export interface SearchGroupsParams {
   cityId: string;
-  title: string;
+  keyword: string;
 }
 
 export async function searchGroups(params: SearchGroupsParams) {
@@ -25,17 +27,35 @@ export async function searchGroups(params: SearchGroupsParams) {
     cityId: params.cityId,
     status: GroupStatus.Passed,
   };
-  const value = await db_group
-    .where({
-      ...filter,
-      title: { $regex: `.*${params.title}.*`, $options: "i" },
-    })
+  const _ = db.command;
+
+  console.log("searchGroups", params);
+  const { data } = await db_group
+    .where(
+      _.and([
+        filter,
+        _.or([
+          {
+            title: {
+              $regex: `.*${params.keyword}.*`,
+              $options: "i",
+            },
+          },
+          {
+            introduction: {
+              $regex: `.*${params.keyword}.*`,
+              $options: "i",
+            },
+          },
+        ]),
+      ])
+    )
     .get();
-  return value.data as Group[];
+  return data as Group[];
 }
 
 export async function getGroupByGroupId(groupId: string) {
-  const filter: Partial<Group> = { groupId };
+  const filter: Partial<Group> = { _id: groupId };
   const { data } = await db_group.where(filter).get();
   if (data.length === 0) {
     return undefined;
@@ -75,9 +95,10 @@ export interface AddGroupParams {
 }
 
 export async function addGroup(params: AddGroupParams) {
-  const groupId = (new Date().getTime() * (Math.random() + 1)).toString(36);
+  console.log("addGroup", params);
+  const groupId = uuid();
   const data: Group = {
-    groupId,
+    _id: groupId,
     ...params,
     like: 0,
     status: GroupStatus.Pending,
@@ -102,6 +123,28 @@ export async function updateLikeByGroupId(
   await db_group.doc(group._id).update({
     data: {
       like: group.like + params.dLike,
+    },
+  });
+}
+
+export interface UpdateCommentsByGroupIdParams {
+  comment: string;
+  groupId: string;
+}
+export async function addCommentByGroupId(
+  params: UpdateCommentsByGroupIdParams
+): Promise<void> {
+  //TODO
+  const { comment, groupId } = params;
+  const group = await getGroupByGroupId(groupId);
+  if (!group) {
+    return Promise.reject("没有该groupId");
+  }
+  const { comments } = group;
+  comments.push(comment);
+  await db_group.doc(groupId).update({
+    data: {
+      comments,
     },
   });
 }

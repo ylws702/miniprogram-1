@@ -4,7 +4,7 @@ import { User } from "../model";
 const db_user = db.collection("user");
 
 export async function getUserByUserId(userId: string) {
-  const filter: Partial<User> = { userId };
+  const filter: Partial<User> = { _id: userId };
   const { data } = await db_user.where(filter).get();
   if (data.length === 0) {
     return undefined;

@@ -1,5 +1,3 @@
-// import { uploadImage } from "../../services/image";
-
 import {
   addGroup,
   AddGroupParams,
@@ -29,7 +27,7 @@ export interface Data {
 }
 
 const emptySubmitData: AddGroupParams = {
-  cityId: "",
+  cityId: '',
   masterId: "",
   masterName: "",
   masterPhone: "",
@@ -67,11 +65,14 @@ type UploaderDeleteEvent = Event<{
 Page({
   data,
   onLoad() {
+    const that=this
     if (!app_publish.globalData.user) {
       toastError("请先登录");
     }
+    // 带初始值
     if (app_publish.globalData.tabPublishQuery) {
       const { groupId } = app_publish.globalData.tabPublishQuery;
+      console.log('tabPublishQuery',groupId)
       app_publish.globalData.tabPublishQuery = undefined;
       (async () => {
         const group = await getGroupByGroupId(groupId);
@@ -84,7 +85,7 @@ Page({
           personalQrCode,
           ...otherGroupInfo
         } = group;
-        this.setData({
+        that.setData({
           photos: images.map((url) => ({ url })),
           ...otherGroupInfo,
           groupQrCode: [{ url: groupQrCode }],
@@ -93,34 +94,37 @@ Page({
         });
       })();
     }
-    this.setData({
-      uplaodPhotos: this.uplaodPhotos.bind(this),
-      uplaodGroupQrCode: this.uplaodGroupQrCode.bind(this),
-      uplaodPersonalQrCode: this.uplaodPersonalQrCode.bind(this),
+    that.setData({
+      uplaodPhotos: that.uplaodPhotos.bind(that),
+      uplaodGroupQrCode: that.uplaodGroupQrCode.bind(that),
+      uplaodPersonalQrCode: that.uplaodPersonalQrCode.bind(that),
     });
   },
 
   async uplaodPhotos(files: Files) {
+    const that=this
     // 文件上传的函数，返回一个promise
     const imagePaths = files.tempFilePaths;
     const ids = await Promise.all(imagePaths.map(uploadImage));
-    this.data.submitData.images.push(...ids);
-    console.log("uplaodPhotos", files, ids, this.data.photos);
+    that.data.submitData.images.push(...ids);
+    console.log("uplaodPhotos", files, ids, that.data.photos);
     return { urls: files.tempFilePaths };
   },
   async uplaodGroupQrCode(files: Files) {
+    const that=this
     const imagePaths = files.tempFilePaths[0];
     const id = await uploadImage(imagePaths);
-    this.data.submitData.groupQrCode = id;
-    console.log("uplaodGroupQrCode", files, id, this.data.photos);
+    that.data.submitData.groupQrCode = id;
+    console.log("uplaodGroupQrCode", files, id, that.data.photos);
     return { urls: files.tempFilePaths };
   },
   async uplaodPersonalQrCode(files: Files) {
+    const that=this
     console.log("上传个人二维码");
     const imagePaths = files.tempFilePaths[0];
     const id = await uploadImage(imagePaths);
-    this.data.submitData.personalQrCode = id;
-    console.log("uplaodPersonalQrCode", files, id, this.data.photos);
+    that.data.submitData.personalQrCode = id;
+    console.log("uplaodPersonalQrCode", files, id, that.data.photos);
     return { urls: files.tempFilePaths };
   },
   uploadError(e: { detail: any }) {
@@ -130,27 +134,35 @@ Page({
     console.log("upload success", e);
   },
   deletePhotos(e: UploaderDeleteEvent) {
-    this.data.submitData.images.splice(e.detail.index, 1);
+    const that=this
+    that.data.submitData.images.splice(e.detail.index, 1);
   },
   deleteGroupQrCode() {
-    this.data.submitData.groupQrCode = "";
+    const that=this
+    that.data.submitData.groupQrCode = "";
   },
   deletePersonalQrCode() {
-    this.data.submitData.personalQrCode = "";
+    const that=this
+    that.data.submitData.personalQrCode = "";
   },
   titleInput(e: InputEvent) {
-    this.data.submitData.title = e.detail.value;
+    const that=this
+    that.data.submitData.title = e.detail.value;
   },
   introductionInput(e: InputEvent) {
-    this.data.submitData.introduction = e.detail.value;
+    const that=this
+    that.data.submitData.introduction = e.detail.value;
   },
   masterNameInput(e: InputEvent) {
-    this.data.submitData.masterName = e.detail.value;
+    const that=this
+    that.data.submitData.masterName = e.detail.value;
   },
   masterPhoneInput(e: InputEvent) {
-    this.data.submitData.masterPhone = e.detail.value;
+    const that=this
+    that.data.submitData.masterPhone = e.detail.value;
   },
   submitForm() {
+    const that=this
     if (!app_publish.globalData.location) {
       toastError("没有位置信息");
       return;
@@ -160,7 +172,7 @@ Page({
       return;
     }
     const { cityId } = app_publish.globalData.location;
-    const { userId } = app_publish.globalData.user;
+    const { _id: userId } = app_publish.globalData.user;
     const {
       title,
       introduction,
@@ -169,7 +181,7 @@ Page({
       personalQrCode,
       groupQrCode,
       images,
-    } = this.data.submitData;
+    } = that.data.submitData;
     if (title.length === 0) {
       toastError("未填写标题");
       return;
@@ -189,9 +201,6 @@ Page({
     if (groupQrCode.length === 0) {
       toastError("未上传群二维码");
     }
-    if (personalQrCode.length === 0) {
-      toastError("未上传个人二维码");
-    }
     (async () => {
       try {
         await addGroup({
@@ -205,14 +214,14 @@ Page({
           title,
           introduction,
         });
-        this.data.submitData = emptySubmitData;
+        that.data.submitData = emptySubmitData;
         {
           const {
             groupQrCode,
             personalQrCode,
             ...otherSubmitData
           } = emptySubmitData;
-          this.setData({
+          that.setData({
             ...otherSubmitData,
             groupQrCode: [],
             personalQrCode: [],

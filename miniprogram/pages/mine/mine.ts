@@ -2,6 +2,7 @@ import { getGroupCountByUserId } from "../../services/group";
 import { getUserId } from "../../services/cloud";
 import { getUserByUserId, addUser } from "../../services/user";
 import { GroupStatus, IAppOption } from "../../model";
+import { getCommentsCountByUserId } from "../../services/comment";
 
 // mine.ts
 export interface Data {
@@ -28,6 +29,10 @@ const app_mine = getApp<IAppOption>();
 
 Page({
   data,
+  onPullDownRefresh() {
+    const that = this
+    that.onLoad()
+  },
   onLoad() {
     const that = this; // 登录
     // wx.login({
@@ -44,7 +49,7 @@ Page({
         const user = await getUserByUserId(userId);
         const { nickName, avatarUrl } = userInfo;
         app_mine.globalData.user = {
-          userId,
+          _id: userId,
           userName: nickName,
           userIcon: avatarUrl,
         };
@@ -55,7 +60,7 @@ Page({
         });
         if (!user) {
           console.log({ userId, userName: nickName });
-          await addUser({ userId, userName: nickName, userIcon: avatarUrl });
+          await addUser({ _id: userId, userName: nickName, userIcon: avatarUrl });
           return;
         }
         (async () =>
@@ -79,6 +84,11 @@ Page({
               GroupStatus.Rejected
             ),
           }))();
+        (async () => {
+          that.setData({
+            reviewCount: await getCommentsCountByUserId(userId)
+          })
+        })
       })();
     };
 

@@ -2,10 +2,47 @@ import db from "./db";
 import { CityInfo } from "../model";
 import { uuid } from "../utils/util";
 const db_city = db.collection("city");
-export function getCities() {
-  return new Promise<CityInfo[]>((resolve, reject) => {
-    db_city.get().then((value) => resolve(value.data as CityInfo[]), reject);
-  });
+const MAX_LIMIT = 20;
+
+
+export interface Province {
+  name: string;
+  cities: CityInfo[];
+}
+
+export async function getCityData() {
+  // 先取出集合记录总数
+  const countResult = await db_city.count()
+  const total = countResult.total
+  // 计算需分几次取
+  const batchTimes = Math.ceil(total / 20)
+  // 承载所有读操作的 promise 的数组
+  const tasks = []
+  for (let i = 0; i < batchTimes; i++) {
+    const promise = db_city.skip(i * MAX_LIMIT).limit(MAX_LIMIT).get()
+    tasks.push(promise)
+  }
+  const map = new Map<string, CityInfo[]>();
+  const thens= tasks.map(task => task.then((value) => {
+    const cityData = value.data as CityInfo[];
+    cityData.forEach(cityInfo => {
+      const { province } = cityInfo;
+      const value = map.get(province);
+      if (value) {
+        value.push(cityInfo);
+      } else {
+        map.set(province, [cityInfo]);
+      }
+    })
+  }))
+  await Promise.all(thens);
+  return Array.from(map).map<Province>(array=>{
+    const [name,cities]=array;
+    return{
+      name,
+      cities
+    }
+  })
 }
 
 export async function getCityInfoByCityId(cityId: string) {

@@ -5,7 +5,9 @@
 		 bindselectresult="selectResult"
 		 search="{{search}}"
 		 focus="{{true}}"
-		></mp-searchbar>
+		 value="{{searchValue}}"
+		>
+		</mp-searchbar>
 		<!-- <view class="search-wrapper" bindtap="onSearchInputTap">
 			<input
 			 class="search-input"
@@ -35,7 +37,7 @@
 			 wx:for-item="recentSearchText"
 			>
 				<view wx:if="{{recentSearchIndex<6}}">
-					<view>
+					<view bindtap="onRecentSearchTap" data-text="{{recentSearchText}}">
 						{{recentSearchText}}
 					</view>
 				</view>

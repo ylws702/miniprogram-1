@@ -1,10 +1,19 @@
 <!--miniprogram/pages/discover/discover.wxml-->
 <view class="main">
 	<view class="section1">
-		<view class="city-wrapper">
-			<view class="city-name">{{cityName}}</view>
-			<view class="city-select-img"></view>
-		</view>
+		<picker
+		 mode="multiSelector"
+		 bindtap="onPickerTap"
+		 bindchange="bindMultiPickerChange"
+		 bindcolumnchange="bindMultiPickerColumnChange"
+		 value="{{multiIndex}}"
+		 range="{{multiArray}}"
+		>
+			<view class="city-wrapper">
+				<view class="city-name">{{cityName}}</view>
+				<image class="city-select-img" src="../../images/icon_under@3x.png" />
+			</view>
+		</picker>
 		<view class="search-wrapper" bindtap="onSearchInputTap">
 			<input
 			 class="search-input"

@@ -19,7 +19,7 @@ Page({
   onLoad() {
     const that = this;
     (async () => {
-      const userId = app_group_pending.globalData?.user?.userId;
+      const userId = app_group_pending.globalData?.user?._id;
       if (!userId) {
         toastError("没有用户信息");
         return;

@@ -1,4 +1,5 @@
 import { Group, GroupStatus, User } from "../model";
+import { Province } from "../services/city";
 
 export const formatTime = (date: Date) => {
   const year = date.getFullYear();
@@ -14,6 +15,7 @@ const formatNumber = (n: number) => {
 };
 
 export function toastError(error: string) {
+  wx.hideLoading();
   wx.showToast({
     title: `错误：${error}`,
     icon: "none",
@@ -25,15 +27,15 @@ export function toastError(error: string) {
 export const loading = "加载中";
 
 export const defaultGroup: Group = {
-  groupId: loading,
+  _id: loading,
   cityId: loading,
   masterId: loading,
   masterName: loading,
   masterPhone: loading,
   images: [],
   title: loading,
-  groupQrCode: loading,
-  personalQrCode: loading,
+  groupQrCode: "../../images/loading.gif",
+  personalQrCode: "../../images/loading.gif",
   introduction: loading,
   like: 0,
   status: GroupStatus.Pending,
@@ -44,7 +46,7 @@ export const defaultGroup: Group = {
 export const defaultUser: User = {
   userName: loading,
   userIcon: "../../images/user.png",
-  userId: loading,
+  _id: loading,
 };
 
 export const defaultGroupImage: string =
@@ -52,8 +54,10 @@ export const defaultGroupImage: string =
 
 export function uuid() {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
-    const r = (Math.random() * 16) | 0,
+    const r = (Math.random() * new Date().getMilliseconds() / 1000 * 16) | 0,
       v = c == "x" ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
 }
+
+export const defaultCityData: Province[] = [{ name: '北京市', cities: [] }]
