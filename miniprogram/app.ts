@@ -3,11 +3,11 @@ import { IAppOption } from "./model";
 
 // app.ts
 App<IAppOption>({
-  globalData: { likeRecord: {} },
+  globalData: { groupLikeRecord: {}, commentLikeRecord: {} },
   onLaunch() {
     // 展示本地存储能力
     const logs = wx.getStorageSync("logs") || [];
-    const that=this;
+    const that = this;
     logs.unshift(Date.now());
     wx.setStorageSync("logs", logs);
     initCloud();

@@ -13,7 +13,8 @@ export interface IAppOption {
     tabDiscoverQuery?: {
       searchText: string;
     };
-    likeRecord: Record<string, boolean | undefined>;
+    groupLikeRecord: Record<string, boolean | undefined>;
+    commentLikeRecord: Record<string, boolean | undefined>;
   };
   userInfoReadyCallback?: WechatMiniprogram.GetUserInfoSuccessCallback;
 }
@@ -79,7 +80,10 @@ export interface User {
   userIcon: string;
 }
 
-export interface Event<Detail = {}, DataSet extends Record<string, any> = {}> {
+export interface Event<
+  Detail = {},
+  DataSet extends Record<string, string | undefined> = {}
+> {
   type: string;
   timeStamp: number;
   target: {

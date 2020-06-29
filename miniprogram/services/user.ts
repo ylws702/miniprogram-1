@@ -1,11 +1,12 @@
 import db from "./db";
 import { User } from "../model";
+import { queryGet } from "../utils/util";
 
 const db_user = db.collection("user");
 
 export async function getUserByUserId(userId: string) {
   const filter: Partial<User> = { _id: userId };
-  const { data } = await db_user.where(filter).get();
+  const { data } = await queryGet(db_user.where(filter));
   if (data.length === 0) {
     return undefined;
   }

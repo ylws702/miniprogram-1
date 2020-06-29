@@ -56,37 +56,100 @@
 		</view>
 	</view>
 
-	<view
-	 wx:for="{{comments}}"
-	 class='shoppcall comment'
-	 data-id="{{item.commentId}}"
-	>
-		<view class='publish'>
-			<image src='https://storage.confolsc.com/storage/image/9f37e8a1fadc7ee20964dd6de7edeb4dbb4b03a1?size=130，130&t=1&redirect=1'></image>
-			<view class='publish_list'>
-				<text class='publish_list_item'>{{item.user.userName}}</text>
-				<view class='like'>
-					<text class='publish_time'>{{item.createTime}}</text>
-					<view
-					 class='like_num_list'
-					 bindtap='bindlike'
-					 data-id='{{index}}'
-					>
-						<!-- <text class='iconfont icon-dianzan2' style='{{item.likes.iszan?"color:red":"color:black"}}'></text> -->
+	<view class='comment'>
+		<view class='pinglun'>
+			<text class='collectTitle'>用户评论</text>
+		</view>
 
-						<text class='like_num'>{{item.like}}</text>
+		<view class='display' wx:if='{{showComments}}'>
+			<block
+			 wx:for="{{comments}}"
+			 wx:for-item='commentsItem'
+			 wx:for-index="commentsIndex"
+			 wx:key='_id'
+			>
+				<view class='user-nickname'>
+					<image class='user-icon' src='{{commentsItem.user.userIcon}}'></image>
+					<text class='nickname'>{{commentsItem.user.userName}}</text>
+				</view>
+				<text class='commentDetail'>{{commentsItem.content}}</text>
+				<view class='time-heart'>
+					<text class='comment-time'>{{commentsItem.createTime}}</text>
+					<text
+					 class='reply-text'
+					 data-commentid="{{commentsItem._id}}"
+					 data-username="{{commentsItem.user.userName}}"
+					 data-comment="{{commentsItem.content}}"
+					 catchtap="onReplyTextTap"
+					>回复
+					</text>
+					<view
+					 catchtap="onLikeCommentTap"
+					 data-commentid="{{commentsItem._id}}"
+					 data-i="{{commentsIndex}}"
+					 class="like"
+					>
+						<image class="like-icon" src="{{commentsItem.ifLike ? '../../images/icon_praise_h@3x.png' : '../../images/icon_praise_n@3x.png'}}" />
+						<view class="like-number">
+							{{commentsItem.like}}
+						</view>
 					</view>
 				</view>
-				<text class='redtree_text'>{{item.content}}</text>
+				<view class="comment-reply-wrapper">
+					<view
+					 class="comment-reply"
+					 wx:for="{{commentsItem.comments}}"
+					 wx:for-item='commentsItemItem'
+					 wx:for-index="commentsIndexIndex"
+					 wx:key='_id'
+					>
+						<view class='user-nickname'>
+							<image class='user-icon' src='{{commentsItemItem.user.userIcon}}'></image>
+							<text class='nickname'>{{commentsItemItem.user.userName}}</text>
+						</view>
+						<text class='commentDetail'>{{commentsItemItem.content}}</text>
+						<view class='time-heart'>
+							<text class='comment-time'>{{commentsItemItem.createTime}}</text>
+							<view
+							 catchtap="onLikeCommentTap"
+							 data-commentid="{{commentsItemItem._id}}"
+							 data-i="{{commentsIndex}}"
+							 data-j="{{commentsIndexIndex}}"
+							 class="like"
+							>
+								<image class="like-icon" src="{{commentsItemItem.ifLike ? '../../images/icon_praise_h@3x.png' : '../../images/icon_praise_n@3x.png'}}" />
+								<view class="like-number">
+									{{commentsItemItem.like}}
+								</view>
+							</view>
+						</view>
+
+					</view>
+					<view
+					 wx:if="{{commentsItem.comments.length>3}}"
+					 class='comment-count'
+					 bindtap='lookAllcollect'
+					 data-aid='{{detail.id}}'
+					>查看全部{{commentsItem.comments.length}}条回复
+					</view>
+				</view>
+
+			</block>
+			<view
+			 wx:if="{{comments.length>10}}"
+			 class='comment-count'
+			 bindtap='lookAllcollect'
+			 data-aid='{{detail.id}}'
+			>查看全部{{comments.length}}条评论
 			</view>
 		</view>
-	</view>
-	<view wx:if='{{comments.length == 0}}'>
-		暂无评论
-	</view>
+		<view class='none' wx:else>
+			<text>该文章还没有评论...</text>
+		</view>
 
-	<mp-cells>
-		<mp-cell title="" ext-class="">
+	</view>
+	<mp-cells title="{{replyTo.title}}">
+		<mp-cell ext-class="">
 			<textarea
 			 class="weui-textarea"
 			 placeholder="我要说点啥"

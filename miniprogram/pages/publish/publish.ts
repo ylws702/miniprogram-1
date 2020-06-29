@@ -6,6 +6,8 @@ import {
 import { IAppOption, Event } from "../../model";
 import { toastError } from "../../utils/util";
 import { uploadImage } from "../../services/image";
+import { getUserByUserId, addUser } from "../../services/user";
+import { getUserId } from "../../services/cloud";
 
 // miniprogram/pages/publish/publish.
 
@@ -27,7 +29,7 @@ export interface Data {
 }
 
 const emptySubmitData: AddGroupParams = {
-  cityId: '',
+  cityId: "",
   masterId: "",
   masterName: "",
   masterPhone: "",
@@ -65,14 +67,40 @@ type UploaderDeleteEvent = Event<{
 Page({
   data,
   onLoad() {
-    const that=this
-    if (!app_publish.globalData.user) {
-      toastError("请先登录");
+    const that = this;
+    const initUserData = async (userInfo: WechatMiniprogram.UserInfo) => {
+      const userId = (await getUserId()).openid;
+      const user = await getUserByUserId(userId);
+      const { nickName, avatarUrl } = userInfo;
+      app_publish.globalData.user = {
+        _id: userId,
+        userName: nickName,
+        userIcon: avatarUrl,
+      };
+      that.setData({
+        userName: nickName,
+        userIconUrl: avatarUrl,
+        HideGetUserInfoBtn: true,
+      });
+      if (!user) {
+        console.log({ userId, userName: nickName });
+        await addUser({ _id: userId, userName: nickName, userIcon: avatarUrl });
+        return;
+      }
+    };
+    if (app_publish.globalData.userInfo) {
+      initUserData(app_publish.globalData.userInfo);
+    } else {
+      // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回
+      // 所以此处加入 callback 以防止这种情况
+      app_publish.userInfoReadyCallback = (res) => {
+        initUserData(res.userInfo);
+      };
     }
     // 带初始值
     if (app_publish.globalData.tabPublishQuery) {
       const { groupId } = app_publish.globalData.tabPublishQuery;
-      console.log('tabPublishQuery',groupId)
+      console.log("tabPublishQuery", groupId);
       app_publish.globalData.tabPublishQuery = undefined;
       (async () => {
         const group = await getGroupByGroupId(groupId);
@@ -102,7 +130,7 @@ Page({
   },
 
   async uplaodPhotos(files: Files) {
-    const that=this
+    const that = this;
     // 文件上传的函数，返回一个promise
     const imagePaths = files.tempFilePaths;
     const ids = await Promise.all(imagePaths.map(uploadImage));
@@ -111,7 +139,7 @@ Page({
     return { urls: files.tempFilePaths };
   },
   async uplaodGroupQrCode(files: Files) {
-    const that=this
+    const that = this;
     const imagePaths = files.tempFilePaths[0];
     const id = await uploadImage(imagePaths);
     that.data.submitData.groupQrCode = id;
@@ -119,7 +147,7 @@ Page({
     return { urls: files.tempFilePaths };
   },
   async uplaodPersonalQrCode(files: Files) {
-    const that=this
+    const that = this;
     console.log("上传个人二维码");
     const imagePaths = files.tempFilePaths[0];
     const id = await uploadImage(imagePaths);
@@ -134,35 +162,35 @@ Page({
     console.log("upload success", e);
   },
   deletePhotos(e: UploaderDeleteEvent) {
-    const that=this
+    const that = this;
     that.data.submitData.images.splice(e.detail.index, 1);
   },
   deleteGroupQrCode() {
-    const that=this
+    const that = this;
     that.data.submitData.groupQrCode = "";
   },
   deletePersonalQrCode() {
-    const that=this
+    const that = this;
     that.data.submitData.personalQrCode = "";
   },
   titleInput(e: InputEvent) {
-    const that=this
+    const that = this;
     that.data.submitData.title = e.detail.value;
   },
   introductionInput(e: InputEvent) {
-    const that=this
+    const that = this;
     that.data.submitData.introduction = e.detail.value;
   },
   masterNameInput(e: InputEvent) {
-    const that=this
+    const that = this;
     that.data.submitData.masterName = e.detail.value;
   },
   masterPhoneInput(e: InputEvent) {
-    const that=this
+    const that = this;
     that.data.submitData.masterPhone = e.detail.value;
   },
   submitForm() {
-    const that=this
+    const that = this;
     if (!app_publish.globalData.location) {
       toastError("没有位置信息");
       return;

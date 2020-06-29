@@ -10,7 +10,7 @@ Page({
     const that = this
     that.setData({
       logs: (wx.getStorageSync('logs') || []).map((log: string) => {
-        return formatTime(new Date(log))
+        return formatTime(new Date(log),false)
       }),
     })
   },

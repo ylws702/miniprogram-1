@@ -1,6 +1,6 @@
 import db from "./db";
 import { Group, GroupStatus } from "../model";
-import { uuid } from "../utils/util";
+import { uuid, queryGet } from "../utils/util";
 
 const db_group = db.collection("group");
 
@@ -13,7 +13,7 @@ export async function getGroupsByCityId(params: GetGroupsByCityIdParams) {
   const filter: Partial<Group> = params;
   console.log("getGroupsByCityId", params);
   filter.status ?? (filter.status = GroupStatus.Passed);
-  const value = await db_group.where(filter).get();
+  const value = await queryGet(db_group.where(filter));
   return value.data as Group[];
 }
 
@@ -30,8 +30,8 @@ export async function searchGroups(params: SearchGroupsParams) {
   const _ = db.command;
 
   console.log("searchGroups", params);
-  const { data } = await db_group
-    .where(
+  const { data } = await queryGet(
+    db_group.where(
       _.and([
         filter,
         _.or([
@@ -50,13 +50,13 @@ export async function searchGroups(params: SearchGroupsParams) {
         ]),
       ])
     )
-    .get();
+  );
   return data as Group[];
 }
 
 export async function getGroupByGroupId(groupId: string) {
   const filter: Partial<Group> = { _id: groupId };
-  const { data } = await db_group.where(filter).get();
+  const { data } = await queryGet(db_group.where(filter));
   if (data.length === 0) {
     return undefined;
   }
@@ -78,7 +78,7 @@ export async function getGroupsByUserId(
   status?: GroupStatus
 ) {
   const filter: Partial<Group> = { masterId, status };
-  const value = await db_group.where(filter).get();
+  const value = await queryGet(db_group.where(filter));
   return value.data as Group[];
 }
 
@@ -127,21 +127,21 @@ export async function updateLikeByGroupId(
   });
 }
 
-export interface UpdateCommentsByGroupIdParams {
-  comment: string;
+export interface AddCommentsByGroupIdParams {
+  commentId: string;
   groupId: string;
 }
 export async function addCommentByGroupId(
-  params: UpdateCommentsByGroupIdParams
+  params: AddCommentsByGroupIdParams
 ): Promise<void> {
   //TODO
-  const { comment, groupId } = params;
+  const { commentId, groupId } = params;
   const group = await getGroupByGroupId(groupId);
   if (!group) {
     return Promise.reject("没有该groupId");
   }
   const { comments } = group;
-  comments.push(comment);
+  comments.push(commentId);
   await db_group.doc(groupId).update({
     data: {
       comments,

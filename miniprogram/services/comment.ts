@@ -1,25 +1,17 @@
-import db from "./db";
+import db, { _ } from "./db";
 import { Comment, User, CommentStatus } from "../model";
-import { getGroupByGroupId, addCommentByGroupId } from "./group";
-import { uuid } from "../utils/util";
+import {
+  getGroupByGroupId,
+  addCommentByGroupId,
+  getGroupsByUserId,
+} from "./group";
+import { uuid, formatTime, queryGet } from "../utils/util";
 
 const db_comment = db.collection("comment");
 
-export async function getCommentsByUserId(userId: string) {
-  const filter: Partial<Comment> = { userId };
-  const { data } = await db_comment.where(filter).get();
-  return data as Comment[];
-}
-
-export async function getCommentsCountByUserId(userId: string) {
-  const filter: Partial<Comment> = { userId };
-  const value = await db_comment.where(filter).count();
-  return value.total;
-}
-
 export async function getCommentByCommentId(commentID: string) {
   const filter: Partial<Comment> = { _id: commentID };
-  const { data } = await db_comment.where(filter).get();
+  const { data } = await queryGet(db_comment.where(filter));
   if (data.length === 0) {
     return undefined;
   }
@@ -31,7 +23,9 @@ export interface CommentTree {
   commentId: string;
   groupId: string;
   user: User;
-  createTime: Date;
+  createTime: string;
+  like: number;
+  ifLike: boolean;
   content: string;
   comments: CommentTree[];
 }
@@ -53,22 +47,28 @@ export async function getCommentsByGroupId(groupId: string) {
             if (!comment) {
               return undefined;
             }
+            const { createTime, ...other } = comment;
             return {
               commentId,
-              ...comment,
+              createTime: formatTime(createTime, false),
+              ...other,
               user: {
-                ...comment,
+                ...other,
               },
+              ifLike: false,
               comments: [],
             };
           }
         );
+        const { createTime, ...other } = comment;
         const result: CommentTree = {
           commentId,
-          ...comment,
+          createTime: formatTime(createTime, false),
+          ...other,
           user: {
-            ...comment,
+            ...other,
           },
+          ifLike: false,
           comments: (await Promise.all(tasks)).filter(Boolean) as CommentTree[],
         };
         return result;
@@ -90,11 +90,15 @@ export interface AddCommentParams {
 }
 
 export async function addComment(params: AddCommentParams) {
-  const commentId = uuid();
-  const { replyTo, ...otherParams } = params;
+  const fromCommentId = uuid();
+  const { replyTo } = params;
   const data: Comment = {
-    _id: commentId,
-    ...otherParams,
+    _id: fromCommentId,
+    groupId: params.groupId,
+    userId: params.userId,
+    userName: params.userName,
+    userIcon: params.userIcon,
+    content: params.content,
     like: 0,
     createTime: new Date(),
     comments: [],
@@ -105,13 +109,103 @@ export async function addComment(params: AddCommentParams) {
       userId: replyTo,
       read: CommentStatus.Unread,
     };
+    await addCommentByCommentId({
+      fromCommentId: fromCommentId,
+      toCommentId: replyTo,
+    });
+  } else {
+    const { groupId: groupId } = params;
+    await addCommentByGroupId({
+      groupId,
+      commentId: fromCommentId,
+    });
   }
-  const { content, groupId } = params;
-  await addCommentByGroupId({
-    groupId,
-    comment: content,
-  });
+  console.log("db_comment.add", data);
   return db_comment.add({
     data,
   });
+}
+
+export interface UpdateLikeByCommentIdParams {
+  dLike: number;
+  commentId: string;
+}
+
+export async function updateLikeByCommentId(
+  params: UpdateLikeByCommentIdParams
+): Promise<void> {
+  const group = await getCommentByCommentId(params.commentId);
+  if (!group) {
+    return Promise.reject("没有该commentId");
+  }
+  await db_comment.doc(group._id).update({
+    data: {
+      like: group.like + params.dLike,
+    },
+  });
+}
+
+export interface AddCommentByCommentIdParams {
+  fromCommentId: string;
+  toCommentId: string;
+}
+export async function addCommentByCommentId(
+  params: AddCommentByCommentIdParams
+): Promise<void> {
+  const { fromCommentId, toCommentId } = params;
+  const toComment = await getCommentByCommentId(toCommentId);
+  if (!toComment) {
+    return Promise.reject("没有该toCommentId");
+  }
+  const { comments } = toComment;
+  comments.push(fromCommentId);
+  await db_comment.doc(toComment._id).update({
+    data: {
+      comments,
+    },
+  });
+}
+
+export async function getUnreadCommentsByUserId(
+  userId: string
+): Promise<Comment[]> {
+  //群主的：
+  const groups = await getGroupsByUserId(userId);
+  const promises1 = groups.map(async (group) => {
+    const filter1: Partial<Comment> = {
+      groupId: group._id,
+      groupMasterRead: CommentStatus.Unread,
+    };
+    const result = await queryGet(db_comment.where(filter1));
+    return result.data as Comment[];
+  });
+  const result1 = await Promise.all(promises1);
+  //用户的
+  const filter2: Partial<Comment> = {
+    replyTo: { userId, read: CommentStatus.Unread },
+  };
+  const result2 = await queryGet(db_comment.where(filter2));
+  const result = (result2.data as Comment[]).concat(...result1);
+  return result;
+}
+
+export async function getUnreadCommentsCountByUserId(userId: string) {
+  //群主的：
+  const groups = await getGroupsByUserId(userId);
+  const promises1 = groups.map(async (group) => {
+    const filter1: Partial<Comment> = {
+      groupId: group._id,
+      groupMasterRead: CommentStatus.Unread,
+    };
+    const result = await db_comment.where(filter1).count();
+    return result.total;
+  });
+  const result1 = await Promise.all(promises1);
+  //用户的
+  const filter2: Partial<Comment> = {
+    replyTo: { userId, read: CommentStatus.Unread },
+  };
+  const result2 = await await db_comment.where(filter2).count();
+  const result = result1.reduce((a, b) => a + b, 0) + result2.total;
+  return result;
 }

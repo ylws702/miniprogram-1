@@ -25,12 +25,12 @@
 	</view>
 	<view class="section2">
 		<view
-		 wx:key="groupId"
+		 wx:key="_id"
 		 wx:for="{{groupData}}"
 		 wx:for-index="groupDataIndex"
 		 wx:for-item="groupDataItem"
 		>
-			<navigator url="../detail/detail?groupId={{groupDataItem.groupId}}">
+			<navigator url="../detail/detail?groupId={{groupDataItem._id}}">
 				<view class="group">
 					<view class="group-image-wrapper">
 						<image class="group-image" src="{{groupDataItem.images[0]}}" />
@@ -50,7 +50,7 @@
 						</view>
 						<view
 						 catchtap="onLikeTap"
-						 data-groupid="{{groupDataItem.groupId}}"
+						 data-groupid="{{groupDataItem._id}}"
 						 class="like"
 						>
 							<image class="like-icon" src="{{groupDataItem.ifLike ? '../../images/icon_praise_h@3x.png' : '../../images/icon_praise_n@3x.png'}}" />

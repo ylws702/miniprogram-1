@@ -16,6 +16,8 @@ import {
   CommentTree,
   getCommentsByGroupId,
   addComment,
+  AddCommentParams,
+  updateLikeByCommentId,
 } from "../../services/comment";
 
 export interface Data {
@@ -31,6 +33,11 @@ export interface Data {
     content: string;
     replyTo?: string;
   };
+  replyTo: {
+    title: string;
+    commentId: string;
+  };
+  showComments: boolean;
 }
 
 const data: Data = {
@@ -45,8 +52,10 @@ const data: Data = {
       commentId: "",
       groupId: "",
       user: defaultUser,
-      createTime: new Date(),
+      createTime: "加载中",
       content: "加载中",
+      like: 0,
+      ifLike: false,
       comments: [],
     },
   ],
@@ -54,12 +63,18 @@ const data: Data = {
   submitData: {
     content: "",
   },
+  showComments: true,
+  replyTo: {
+    commentId: "",
+    title: "",
+  },
 };
 const app_detail = getApp<IAppOption>();
 
 Page({
   data,
   onLoad: function (query) {
+    console.log("query", query);
     const that = this;
     const { groupId } = query;
     if (!groupId) {
@@ -94,7 +109,7 @@ Page({
       that.setData({
         group,
         hiddenPersonalQrCode,
-        createTime: formatTime(group.createTime),
+        createTime: formatTime(group.createTime, true),
         hiddenEditIcon: !(userId && masterId === userId),
       });
       (async () => {
@@ -133,7 +148,7 @@ Page({
       toastError("还没登录");
       return;
     }
-    const { group, submitData } = that.data;
+    const { replyTo, group, submitData } = that.data;
     const { _id: groupId } = group;
     const { user } = app_detail.globalData;
     const { content } = submitData;
@@ -142,12 +157,16 @@ Page({
       return;
     }
     try {
-      await addComment({
-        groupId,
+      const addCommentParams: AddCommentParams = {
+        groupId: groupId,
         userId: user._id,
         ...user,
         ...submitData,
-      });
+      };
+      if (replyTo.commentId !== "") {
+        addCommentParams.replyTo = replyTo.commentId;
+      }
+      await addComment(addCommentParams);
       wx.showToast({
         title: "成功",
         icon: "success",
@@ -157,12 +176,46 @@ Page({
         submitData: {
           content: "",
         },
+        myComment: "",
       });
       that.onLoad({
         groupId,
       });
     } catch (error) {
-      toastError("回复失败");
+      toastError("回复失败", error);
     }
+  },
+  onLikeCommentTap(e: Event<{}, { commentid: string; i: string; j?: string }>) {
+    const that = this;
+    const { comments } = that.data;
+    const { commentid, i, j } = e.currentTarget.dataset;
+    console.log("dataset", e.currentTarget.dataset);
+    const comment =
+      j === undefined
+        ? comments[Number(i)]
+        : comments[Number(i)].comments[Number(j)];
+    const { ifLike } = comment;
+    const dLike = ifLike ? -1 : 1;
+    updateLikeByCommentId({ commentId: commentid, dLike });
+    app_detail.globalData.commentLikeRecord[commentid] = !ifLike;
+    comment.ifLike = !ifLike;
+    comment.like += dLike;
+    that.setData({
+      comments,
+    });
+  },
+  onReplyTextTap(
+    e: Event<{}, { commentid: string; username: string; comment: string }>
+  ) {
+    const that=this;
+    console.log(e);
+    const { commentid, username, comment } = e.currentTarget.dataset;
+    const title = `回复：${username}:${comment}`;
+    that.setData({
+      replyTo: {
+        title: title.length > 20 ? title.slice(0, 20) + "..." : title,
+        commentId: commentid,
+      },
+    });
   },
 });

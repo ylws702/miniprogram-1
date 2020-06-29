@@ -110,7 +110,7 @@ Page({
       const groups = await (title
         ? searchGroups({ cityId, keyword: title })
         : getGroupsByCityId({ cityId }));
-      const { likeRecord } = app_discover.globalData;
+      const { groupLikeRecord: likeRecord } = app_discover.globalData;
       const groupData = groups.map(
         (group): GroupInfo => ({
           ...group,
@@ -141,7 +141,7 @@ Page({
     const { ifLike } = group;
     const dLike = ifLike ? -1 : 1;
     updateLikeByGroupId({ groupId: groupid, dLike });
-    app_discover.globalData.likeRecord[groupid] = !ifLike;
+    app_discover.globalData.groupLikeRecord[groupid] = !ifLike;
     group.ifLike = !ifLike;
     group.like += dLike;
     that.setData({
