@@ -6,7 +6,7 @@
 	"miniprogramRoot": "miniprogram/",
 	"compileType": "miniprogram",
 	"libVersion": "2.8.2",
-	"projectname": "miniprogram-1",
+	"projectname": "找找群",
 	"scripts": {
 		"beforeCompile": "npm run tsc",
 		"beforePreview": "",

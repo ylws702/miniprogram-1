@@ -9,6 +9,7 @@ export interface IAppOption {
     };
     tabPublishQuery?: {
       groupId: string;
+      detailType: "pending" | "rejected" | "passed";
     };
     tabDiscoverQuery?: {
       searchText: string;
@@ -23,12 +24,15 @@ export interface CityInfo {
   cityId: string;
   city: string;
   province: string;
+  topGroups: string[];
 }
 
 export enum GroupStatus {
+  "Deleted" = -1,
   "Pending" = 0,
   "Passed" = 1,
   "Rejected" = 2,
+  "Repending" = 3,
 }
 
 export enum CommentStatus {
@@ -46,7 +50,7 @@ export interface Comment {
   content: string;
   like: number;
   replyTo?: {
-    userId: string;
+    commentId: string;
     read: CommentStatus;
   };
   groupMasterRead: CommentStatus;
@@ -69,9 +73,10 @@ export type Group = {
   comments: string[];
 } & (
   | {
-      status: GroupStatus.Passed | GroupStatus.Pending;
+      status: GroupStatus.Passed | GroupStatus.Pending | GroupStatus.Deleted;
     }
   | { status: GroupStatus.Rejected; rejectReason: string }
+  | { status: GroupStatus.Repending; oldGroupId: string }
 );
 
 export interface User {

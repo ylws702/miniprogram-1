@@ -3,3 +3,5 @@ miniprogram/miniprogram_npm
 
 *.js
 t.json
+
+.vscode

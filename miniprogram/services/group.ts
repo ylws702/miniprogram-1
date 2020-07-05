@@ -3,6 +3,7 @@ import { Group, GroupStatus } from "../model";
 import { uuid, queryGet } from "../utils/util";
 
 const db_group = db.collection("group");
+const _ = db.command;
 
 export interface GetGroupsByCityIdParams {
   cityId: string;
@@ -10,8 +11,8 @@ export interface GetGroupsByCityIdParams {
 }
 
 export async function getGroupsByCityId(params: GetGroupsByCityIdParams) {
-  const filter: Partial<Group> = params;
   console.log("getGroupsByCityId", params);
+  const filter: Partial<Group> = params;
   filter.status ?? (filter.status = GroupStatus.Passed);
   const value = await queryGet(db_group.where(filter));
   return value.data as Group[];
@@ -82,6 +83,12 @@ export async function getGroupsByUserId(
   return value.data as Group[];
 }
 
+export async function getGroupsByStatus(status: GroupStatus) {
+  const filter: Partial<Group> = { status };
+  const value = await queryGet(db_group.where(filter));
+  return value.data as Group[];
+}
+
 export interface AddGroupParams {
   cityId: string;
   masterId: string;
@@ -106,6 +113,30 @@ export async function addGroup(params: AddGroupParams) {
     comments: [],
   };
   await db_group.add({ data });
+}
+
+export async function editPassedGroup(
+  params: AddGroupParams,
+  oldGroupId: string
+) {
+  const groupId = uuid();
+  const data: Group = {
+    _id: groupId,
+    ...params,
+    like: 0,
+    status: GroupStatus.Repending,
+    oldGroupId,
+    createTime: new Date(),
+    comments: [],
+  };
+  await db_group.add({ data });
+}
+
+export async function deleteGroup(groupId: string) {
+  const partial: Partial<Group> = {
+    status: GroupStatus.Deleted,
+  };
+  await db_group.doc(groupId).update({ data: partial });
 }
 
 export interface UpdateLikeByGroupIdParams {
@@ -147,4 +178,9 @@ export async function addCommentByGroupId(
       comments,
     },
   });
+}
+
+export async function getCommentGroups(cityId: string) {
+  const groups = await getGroupsByCityId({ cityId });
+  return groups.sort((a, b) => b.like - a.like).slice(0, 6);
 }

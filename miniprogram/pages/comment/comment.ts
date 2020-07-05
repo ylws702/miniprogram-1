@@ -6,6 +6,7 @@ import { getUnreadCommentsByUserId } from "../../services/comment";
 import { getGroupByGroupId } from "../../services/group";
 
 interface CommentData {
+  groupId: string;
   groupTitle: string;
   unreadCount: number;
 }
@@ -21,7 +22,7 @@ const app_group_pending = getApp<IAppOption>();
 
 Page({
   data,
-  onLoad() {
+  onShow() {
     const that = this;
     (async () => {
       const userId = app_group_pending.globalData?.user?._id;
@@ -61,6 +62,7 @@ Page({
 
       that.setData({
         commentData: data.map((item) => ({
+          groupId: "",
           groupTitle: "加载中",
           unreadCount: item.count,
         })),
@@ -69,6 +71,7 @@ Page({
         const group = await getGroupByGroupId(item.groupId);
         const { commentData } = that.data;
         commentData[index].groupTitle = group?.title ?? "加载失败";
+        commentData[index].groupId = group?._id ?? "";
         that.setData({
           commentData,
         });

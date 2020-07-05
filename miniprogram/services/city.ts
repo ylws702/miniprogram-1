@@ -30,9 +30,9 @@ export async function getCityData() {
       const cityData = value.data as CityInfo[];
       cityData.forEach((cityInfo) => {
         const { province } = cityInfo;
-        const value = map.get(province);
-        if (value) {
-          value.push(cityInfo);
+        const cityInfoData = map.get(province);
+        if (cityInfoData) {
+          cityInfoData.push(cityInfo);
         } else {
           map.set(province, [cityInfo]);
         }
@@ -71,7 +71,7 @@ export function getCityId(params: GetCityIdParams) {
       const { data } = value;
       if (data.length === 0) {
         const cityId = uuid();
-        const cityInfo = { ...params, cityId };
+        const cityInfo: CityInfo = { ...params, cityId, topGroups: [] };
         addCity(cityInfo).then(() => resolve(cityInfo));
       }
       resolve(data[0] as CityInfo);
@@ -82,4 +82,12 @@ export function getCityId(params: GetCityIdParams) {
 export async function addCity(city: CityInfo) {
   const result = await db_city.add({ data: city });
   return result._id.toString();
+}
+
+export async function getTopGroupsByCityId(cityId: string) {
+  const cityInfo = await getCityInfoByCityId(cityId);
+  if (!cityInfo) {
+    return Promise.reject(new Error("没有该cityId"));
+  }
+  return cityInfo.topGroups;
 }

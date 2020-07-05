@@ -25,9 +25,12 @@ Page({
         return;
       }
       const groupData = await getGroupsByUserId(userId, GroupStatus.Rejected);
+
       console.log("Rejected groupData", groupData);
       that.setData({
-        groupData,
+        groupData: groupData.sort(
+          (a, b) => a.createTime.getTime() - b.createTime.getTime()
+        ),
       });
     })();
   },

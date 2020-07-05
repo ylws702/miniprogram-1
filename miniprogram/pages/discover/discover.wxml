@@ -43,7 +43,7 @@
 					</view>
 					<view class="group-footer">
 						<view class="user">
-							<image class="user-icon" src="../../images/user.png" />
+							<image class="user-icon" src="{{groupDataItem.userIcon}}" />
 							<view class="user-name">
 								{{groupDataItem.masterName}}
 							</view>

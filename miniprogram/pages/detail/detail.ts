@@ -8,16 +8,18 @@ import {
   loading,
   defaultGroupImage,
   toastError,
+  DetailType,
 } from "../../utils/util";
 import { getGroupByGroupId } from "../../services/group";
 import { getUserByUserId } from "../../services/user";
 import { getCityInfoByCityId } from "../../services/city";
 import {
   CommentTree,
-  getCommentsByGroupId,
+  getCommentTreeByGroupId,
   addComment,
   AddCommentParams,
   updateLikeByCommentId,
+  readCommentsByGroupMaster,
 } from "../../services/comment";
 
 export interface Data {
@@ -37,7 +39,11 @@ export interface Data {
     title: string;
     commentId: string;
   };
+  showAllReplies: boolean[];
   showComments: boolean;
+  showAllComments: boolean;
+  type: DetailType;
+  cardCur: number;
 }
 
 const data: Data = {
@@ -47,27 +53,20 @@ const data: Data = {
   cityName: loading,
   hiddenEditIcon: true,
   hiddenPersonalQrCode: true,
-  comments: [
-    {
-      commentId: "",
-      groupId: "",
-      user: defaultUser,
-      createTime: "加载中",
-      content: "加载中",
-      like: 0,
-      ifLike: false,
-      comments: [],
-    },
-  ],
+  comments: [],
   myComment: "",
   submitData: {
     content: "",
   },
-  showComments: true,
+  showAllReplies: [],
+  showComments: false,
+  showAllComments: false,
   replyTo: {
     commentId: "",
     title: "",
   },
+  type: "passed",
+  cardCur: 0,
 };
 const app_detail = getApp<IAppOption>();
 
@@ -76,13 +75,17 @@ Page({
   onLoad: function (query) {
     console.log("query", query);
     const that = this;
-    const { groupId } = query;
+    const { groupId, type } = query;
+    that.setData({
+      type: (type as DetailType) ?? "",
+    });
     if (!groupId) {
+      toastError("该群信息不存在");
       return;
     }
     // 加载评论
     (async () => {
-      const comments = await getCommentsByGroupId(groupId);
+      const comments = await getCommentTreeByGroupId(groupId);
       console.log("getCommentsByGroupId", comments);
       that.setData({
         comments,
@@ -101,17 +104,27 @@ Page({
           title: "群详情页（申请中）",
         });
       }
+      if (status === GroupStatus.Passed) {
+        that.setData({
+          showComments: true,
+        });
+      }
       const userId = app_detail.globalData.user?._id;
       if (images.length === 0) {
         images.push(defaultGroupImage);
       }
       const hiddenPersonalQrCode = group.personalQrCode.length === 0;
-      that.setData({
+      const newData: Partial<Data> = {
         group,
         hiddenPersonalQrCode,
         createTime: formatTime(group.createTime, true),
-        hiddenEditIcon: !(userId && masterId === userId),
-      });
+      };
+      if (userId && masterId === userId) {
+        newData.hiddenEditIcon = false;
+        readCommentsByGroupMaster(groupId);
+      }
+
+      that.setData(newData);
       (async () => {
         const { masterId } = group;
         const user = await getUserByUserId(masterId);
@@ -130,10 +143,13 @@ Page({
   },
   edit() {
     const that = this;
+    const { group, type: detailType } = that.data;
+    const { _id: groupId } = group;
     app_detail.globalData.tabPublishQuery = {
-      groupId: that.data.group._id,
+      groupId,
+      detailType,
     };
-    console.log("set groupid", that.data.group._id);
+    console.log("set groupid", groupId);
     wx.switchTab({
       url: "../publish/publish",
     });
@@ -158,7 +174,7 @@ Page({
     }
     try {
       const addCommentParams: AddCommentParams = {
-        groupId: groupId,
+        groupId,
         userId: user._id,
         ...user,
         ...submitData,
@@ -178,7 +194,7 @@ Page({
         },
         myComment: "",
       });
-      that.onLoad({
+      that.onShow({
         groupId,
       });
     } catch (error) {
@@ -207,7 +223,7 @@ Page({
   onReplyTextTap(
     e: Event<{}, { commentid: string; username: string; comment: string }>
   ) {
-    const that=this;
+    const that = this;
     console.log(e);
     const { commentid, username, comment } = e.currentTarget.dataset;
     const title = `回复：${username}:${comment}`;
@@ -216,6 +232,26 @@ Page({
         title: title.length > 20 ? title.slice(0, 20) + "..." : title,
         commentId: commentid,
       },
+    });
+  },
+  lookAllcollect(e: Event<{}, { i?: string }>) {
+    const { i } = e.currentTarget.dataset;
+    if (i === undefined) {
+      this.setData({
+        showAllComments: true,
+      });
+    } else {
+      const { showAllReplies } = this.data;
+      showAllReplies[Number(i)] = true;
+      this.setData({
+        showAllReplies,
+      });
+    }
+    console.log(e);
+  },
+  cardSwiper(e: Event<{ current: number }>) {
+    this.setData({
+      cardCur: e.detail.current,
     });
   },
 });

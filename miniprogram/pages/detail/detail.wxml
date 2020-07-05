@@ -3,26 +3,25 @@
 	<scroll-view style="height:200px">
 		<view class="swiper">
 			<swiper
-			 class="swiper-box"
-			 indicator-dots="{{true}}"
-			 autoplay="{{true}}"
-			 interval="3000"
+			 class="card-swiper round-dot"
+			 indicator-dots="true"
+			 circular="true"
+			 autoplay="true"
+			 interval="5000"
 			 duration="500"
-			 indicator-color="dimgray"
-			 indicator-active-color="red"
+			 bindchange="cardSwiper"
+			 indicator-color="#8799a3"
+			 indicator-active-color="#0081ff"
 			>
-				<block wx:for-items="{{group.images}}">
-					<navigator url="../blogList/blogList">
-						<swiper-item>
-							<block wx:if="{{item}}">
-								<image src="{{item}}" mode="aspectFill" />
-							</block>
-							<block wx:else>
-								<image src="../../images/default_pic.png" mode="aspectFill"></image>
-							</block>
-						</swiper-item>
-					</navigator>
-				</block>
+				<swiper-item
+				 wx:for="{{group.images}}"
+				 wx:key
+				 class="{{cardCur==index?'cur':''}}"
+				>
+					<view class="swiper-item">
+						<image src="{{item}}" mode="aspectFill"></image>
+					</view>
+				</swiper-item>
 			</swiper>
 		</view>
 	</scroll-view>
@@ -56,26 +55,27 @@
 		</view>
 	</view>
 
-	<view class='comment'>
+	<view class='comment' wx:if='{{showComments}}'>
 		<view class='pinglun'>
 			<text class='collectTitle'>用户评论</text>
 		</view>
 
-		<view class='display' wx:if='{{showComments}}'>
+		<view class='display'>
 			<block
 			 wx:for="{{comments}}"
 			 wx:for-item='commentsItem'
 			 wx:for-index="commentsIndex"
 			 wx:key='_id'
 			>
-				<view class='user-nickname'>
-					<image class='user-icon' src='{{commentsItem.user.userIcon}}'></image>
-					<text class='nickname'>{{commentsItem.user.userName}}</text>
-				</view>
-				<text class='commentDetail'>{{commentsItem.content}}</text>
-				<view class='time-heart'>
-					<text class='comment-time'>{{commentsItem.createTime}}</text>
-					<text
+				<view wx:if="{{commentsIndex<10||showAllComments}}">
+					<view class='user-nickname'>
+						<image class='user-icon' src='{{commentsItem.user.userIcon}}'></image>
+						<text class='nickname'>{{commentsItem.user.userName}}</text>
+					</view>
+					<text class='commentDetail'>{{commentsItem.content}}</text>
+					<view class='time-heart'>
+						<text class='comment-time'>{{commentsItem.createTime}}</text>
+						<text
 					 class='reply-text'
 					 data-commentid="{{commentsItem._id}}"
 					 data-username="{{commentsItem.user.userName}}"
@@ -83,84 +83,84 @@
 					 catchtap="onReplyTextTap"
 					>回复
 					</text>
-					<view
-					 catchtap="onLikeCommentTap"
-					 data-commentid="{{commentsItem._id}}"
-					 data-i="{{commentsIndex}}"
-					 class="like"
-					>
-						<image class="like-icon" src="{{commentsItem.ifLike ? '../../images/icon_praise_h@3x.png' : '../../images/icon_praise_n@3x.png'}}" />
-						<view class="like-number">
-							{{commentsItem.like}}
+						<view
+						 catchtap="onLikeCommentTap"
+						 data-commentid="{{commentsItem._id}}"
+						 data-i="{{commentsIndex}}"
+						 class="like"
+						>
+							<image class="like-icon" src="{{commentsItem.ifLike ? '../../images/icon_praise_h@3x.png' : '../../images/icon_praise_n@3x.png'}}" />
+							<view class="like-number">
+								{{commentsItem.like}}
+							</view>
 						</view>
 					</view>
-				</view>
-				<view class="comment-reply-wrapper">
-					<view
-					 class="comment-reply"
-					 wx:for="{{commentsItem.comments}}"
-					 wx:for-item='commentsItemItem'
-					 wx:for-index="commentsIndexIndex"
-					 wx:key='_id'
-					>
-						<view class='user-nickname'>
-							<image class='user-icon' src='{{commentsItemItem.user.userIcon}}'></image>
-							<text class='nickname'>{{commentsItemItem.user.userName}}</text>
-						</view>
-						<text class='commentDetail'>{{commentsItemItem.content}}</text>
-						<view class='time-heart'>
-							<text class='comment-time'>{{commentsItemItem.createTime}}</text>
-							<view
-							 catchtap="onLikeCommentTap"
-							 data-commentid="{{commentsItemItem._id}}"
-							 data-i="{{commentsIndex}}"
-							 data-j="{{commentsIndexIndex}}"
-							 class="like"
-							>
-								<image class="like-icon" src="{{commentsItemItem.ifLike ? '../../images/icon_praise_h@3x.png' : '../../images/icon_praise_n@3x.png'}}" />
-								<view class="like-number">
-									{{commentsItemItem.like}}
+					<view class="comment-reply-wrapper">
+						<view
+						 class="comment-reply"
+						 wx:for="{{commentsItem.comments}}"
+						 wx:for-item='commentsItemItem'
+						 wx:for-index="commentsIndexIndex"
+						 wx:key='_id'
+						>
+							<view wx:if="{{commentsIndexIndex<3||showAllReplies[commentsIndex]}}">
+								<view class='user-nickname'>
+									<image class='user-icon' src='{{commentsItemItem.user.userIcon}}'></image>
+									<text class='nickname'>{{commentsItemItem.user.userName}}</text>
+								</view>
+								<text class='commentDetail'>{{commentsItemItem.content}}</text>
+								<view class='time-heart'>
+									<text class='comment-time'>{{commentsItemItem.createTime}}</text>
+									<view
+									 catchtap="onLikeCommentTap"
+									 data-commentid="{{commentsItemItem._id}}"
+									 data-i="{{commentsIndex}}"
+									 data-j="{{commentsIndexIndex}}"
+									 class="like"
+									>
+										<image class="like-icon" src="{{commentsItemItem.ifLike ? '../../images/icon_praise_h@3x.png' : '../../images/icon_praise_n@3x.png'}}" />
+										<view class="like-number">
+											{{commentsItemItem.like}}
+										</view>
+									</view>
 								</view>
 							</view>
 						</view>
-
-					</view>
-					<view
-					 wx:if="{{commentsItem.comments.length>3}}"
-					 class='comment-count'
-					 bindtap='lookAllcollect'
-					 data-aid='{{detail.id}}'
-					>查看全部{{commentsItem.comments.length}}条回复
+						<view
+						 wx:if="{{commentsItem.comments.length>3&&!showAllReplies[commentsIndex]}}"
+						 class='comment-count'
+						 bindtap='lookAllcollect'
+						 data-i='{{commentsIndex}}'
+						>查看全部{{commentsItem.comments.length}}条回复
+						</view>
 					</view>
 				</view>
-
 			</block>
 			<view
-			 wx:if="{{comments.length>10}}"
+			 wx:if="{{comments.length>10&&!showAllComments}}"
 			 class='comment-count'
 			 bindtap='lookAllcollect'
-			 data-aid='{{detail.id}}'
 			>查看全部{{comments.length}}条评论
 			</view>
 		</view>
-		<view class='none' wx:else>
+		<view class='none' wx:if='{{!showComments}}'>
 			<text>该文章还没有评论...</text>
 		</view>
 
-	</view>
-	<mp-cells title="{{replyTo.title}}">
-		<mp-cell ext-class="">
-			<textarea
-			 class="weui-textarea"
-			 placeholder="我要说点啥"
-			 value="{{myComment}}"
-			 bindinput="myCommentInput"
-			/>
-			</mp-cell>
-	</mp-cells>
+		<mp-cells title="{{replyTo.title}}">
+			<mp-cell ext-class="">
+				<textarea
+				 class="weui-textarea"
+				 placeholder="我要说点啥"
+				 value="{{myComment}}"
+				 bindinput="myCommentInput"
+				/>
+				</mp-cell>
+		</mp-cells>
 	
-    <view slot="button">
-        <button class="weui-btn" type="primary" bindtap="submitComment">回复</button>
-    </view>
+		<view slot="button">
+			<button class="weui-btn" type="primary" bindtap="submitComment">回复</button>
+		</view>
+	</view>
 </view>
 

@@ -1,4 +1,4 @@
-import { Group, GroupStatus, User } from "../model";
+import { Group, GroupStatus, User, IAppOption } from "../model";
 import { Province } from "../services/city";
 
 export const formatTime = (date: Date, onlyDate: boolean) => {
@@ -101,3 +101,7 @@ export async function queryGet(query: DB.Query) {
     { data: [], errMsg: "" }
   );
 }
+
+export type DetailType = NonNullable<
+  IAppOption['globalData']['tabPublishQuery']
+>['detailType'];

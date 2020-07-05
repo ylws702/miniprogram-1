@@ -7,7 +7,7 @@
 	 wx:for-item="groupDataItem"
 	>
 		<view class="weui-panel__ft">
-			<navigator url="../detail/detail?groupId={{groupDataItem._id}}">
+			<navigator url="../detail/detail?type=rejected&groupId={{groupDataItem._id}}">
 				<view class="weui-cell weui-cell_access weui-cell_link">
 					<view class="weui-cell__bd weui-cell_primary">
 						<view>{{groupDataItem.title}}</view>
