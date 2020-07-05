@@ -58,9 +58,11 @@
 			 wx:for-item="suggestionItem"
 			>
 				<view wx:if="{{suggestionIndex<4}}">
-					<view>
-						{{suggestionItem.text}}
-					</view>
+					<navigator url="../detail/detail?groupId={{suggestionItem._id}}">
+						<view>
+							{{suggestionItem.title}}
+						</view>
+					</navigator>
 				</view>
 			</view>
 		</view>

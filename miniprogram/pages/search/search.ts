@@ -1,8 +1,8 @@
 // miniprogram/pages/search/search.js
 
-import { Event, IAppOption } from "../../model";
-import { toastError } from "../../utils/util";
-import { searchGroups } from "../../services/group";
+import { Event, IAppOption, Group } from "../../model";
+import { toastError, defaultGroup } from "../../utils/util";
+import { searchGroups, getCommentGroups } from "../../services/group";
 
 const key_recentSearch = "recentSearch";
 
@@ -11,7 +11,7 @@ export interface Data {
   searchValue: string;
   recentSearch: string[];
   searchVal: string;
-  suggestion: { text: string }[];
+  suggestion: Group[];
 }
 
 const data: Data = {
@@ -19,29 +19,7 @@ const data: Data = {
   searchValue: "",
   searchVal: "124",
   recentSearch: [],
-  suggestion: [
-    {
-      text: "关键字XXXXX1",
-    },
-    {
-      text: "关键字XXXXX2",
-    },
-    {
-      text: "关键字XXXXX3",
-    },
-    {
-      text: "关键字XXXXX4",
-    },
-    {
-      text: "关键字XXXXX5",
-    },
-    {
-      text: "关键字XXXXX6",
-    },
-    {
-      text: "关键字XXXXX7",
-    },
-  ],
+  suggestion: [defaultGroup],
 };
 
 export const app = getApp<IAppOption>();
@@ -51,6 +29,8 @@ interface Option {
   value: string | number;
 }
 
+const app_search = getApp<IAppOption>();
+
 Page({
   data,
   onLoad() {
@@ -58,6 +38,23 @@ Page({
     that.setData({
       search: that.search.bind(that),
     });
+    if (app_search.globalData.location) {
+      (async () => {
+        if (app_search.globalData.location?.cityId) {
+          const suggestion = await getCommentGroups(
+            app_search.globalData.location.cityId
+          );
+          if (suggestion.length === 0) {
+            const group = defaultGroup;
+            group.title = "暂无推荐";
+            suggestion.push(group);
+          }
+          that.setData({
+            suggestion,
+          });
+        }
+      })();
+    }
     wx.getStorage({
       key: key_recentSearch,
       success(res) {
@@ -107,20 +104,19 @@ Page({
         success(res) {
           console.log(res);
           const recentSearch: string[] = res.data;
-          if (recentSearch.length < 6) {
-            recentSearch.push(searchText);
-            wx.setStorage({
-              key: key_recentSearch,
-              data: recentSearch,
-              success(res) {
-                console.log(res);
-                that.setData({
-                  recentSearch,
-                });
-              },
-              fail: console.log,
-            });
-          }
+          recentSearch.unshift(searchText);
+          recentSearch.push(searchText);
+          wx.setStorage({
+            key: key_recentSearch,
+            data: recentSearch.slice(0, 6),
+            success(res) {
+              console.log(res);
+              that.setData({
+                recentSearch,
+              });
+            },
+            fail: console.log,
+          });
         },
         fail: console.log,
       });

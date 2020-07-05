@@ -88,11 +88,11 @@ Page({
               GroupStatus.Rejected
             ),
           }))();
-        async () => {
+        (async () => {
           that.setData({
             reviewCount: await getUnreadCommentsCountByUserId(userId),
           });
-        };
+        })();
       })();
     };
 

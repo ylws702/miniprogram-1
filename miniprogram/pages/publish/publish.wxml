@@ -5,7 +5,7 @@
 		<mp-cell title="" ext-class="">
 			<input
 			 class="weui-input"
-			 placeholder="请填写标题:"
+			 placeholder="请填写标题*"
 			 value="{{title}}"
 			 bindinput="titleInput"
 			/>
@@ -20,7 +20,7 @@
 		>
 			<textarea
 			 class="weui-textarea"
-			 placeholder="请填写简介"
+			 placeholder="请填写简介*"
 			 value="{{introduction}}"
 			 bindinput="introductionInput"
 			 style="height: 4em"
@@ -37,17 +37,17 @@
             files="{{photos}}" 
             delete="{{true}}"
             max-count="3" 
-            title="照片上传" 
+            title="照片上传(可选)" 
             tips="最多上传三张照片，默认第一张照片为封面图，建议尺寸 XXX*XXX">
             </mp-uploader>
         </mp-cell>
     </mp-cells>
 	<mp-cells title="">
 		<mp-cell title="" ext-class="">
-			<input class="weui-input" placeholder="申请人姓名" value="{{masterName}}" bindinput="masterNameInput"/>
+			<input class="weui-input" placeholder="申请人姓名*" value="{{masterName}}" bindinput="masterNameInput"/>
 		</mp-cell>
 		<mp-cell title="" ext-class="">
-			<input class="weui-input" placeholder="申请人手机" value="{{masterPhone}}" bindinput="masterPhoneInput" />
+			<input class="weui-input" placeholder="申请人手机*" value="{{masterPhone}}" bindinput="masterPhoneInput" />
 		</mp-cell>
 	</mp-cells>
 	<mp-cells title="">
@@ -59,7 +59,7 @@
             upload="{{uplaodGroupQrCode}}" 
 			files="{{groupQrCode}}" 
             delete="{{true}}"
-            title="上传你的群二维码" 
+            title="上传你的群二维码*" 
             tips="">
             </mp-uploader>
 		</mp-cell>
@@ -71,7 +71,7 @@
             upload="{{uplaodPersonalQrCode}}" 
             files="{{personalQrCode}}" 
             delete="{{true}}"
-            title="上传你的个人二维码" 
+            title="上传你的个人二维码(可选)" 
             tips="">
             </mp-uploader>
 		</mp-cell>

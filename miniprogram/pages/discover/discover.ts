@@ -6,7 +6,8 @@ import {
   updateLikeByGroupId,
   searchGroups,
 } from "../../services/group";
-import { toastError } from "../../utils/util";
+import { toastError, defaultGroupImage } from "../../utils/util";
+import { getUserByUserId } from "../../services/user";
 
 const app_discover = getApp<IAppOption>();
 
@@ -14,6 +15,7 @@ const key_cityData = "cityData";
 
 type GroupInfo = Group & {
   ifLike: boolean;
+  userIcon: string;
 };
 
 interface Data {
@@ -45,7 +47,7 @@ Page({
     const that = this;
     that.onLoad();
   },
-  onLoad() {
+  onShow() {
     const that = this;
     if (app_discover.globalData.tabDiscoverQuery) {
       const { title } = that.data;
@@ -112,11 +114,27 @@ Page({
         : getGroupsByCityId({ cityId }));
       const { groupLikeRecord: likeRecord } = app_discover.globalData;
       const groupData = groups.map(
-        (group): GroupInfo => ({
-          ...group,
-          ifLike: likeRecord[group._id] ?? false,
-        })
+        ({ images, ...other }): GroupInfo => {
+          if (images.length === 0) {
+            images.push(defaultGroupImage);
+          }
+          return {
+            ...other,
+            images,
+            ifLike: likeRecord[other._id] ?? false,
+            userIcon: "../../images/user.png",
+          };
+        }
       );
+      that.setData({ groupData });
+      const loadUserIcon = groups.map(async ({ masterId }, index) => {
+        const master = await getUserByUserId(masterId);
+        if (!master) {
+          return;
+        }
+        groupData[index].userIcon = master.userIcon;
+      });
+      await Promise.all(loadUserIcon);
       that.setData({ groupData });
     } catch (error) {
       console.error(error);
@@ -225,7 +243,7 @@ Page({
         cityName: city,
       });
       wx.showLoading({
-        title: "正在获取城市信息",
+        title: "获取城市中...",
       });
       const cityInfo = await getCityId({
         city,

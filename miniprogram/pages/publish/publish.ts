@@ -2,9 +2,11 @@ import {
   addGroup,
   AddGroupParams,
   getGroupByGroupId,
+  deleteGroup,
+  editPassedGroup,
 } from "../../services/group";
 import { IAppOption, Event } from "../../model";
-import { toastError } from "../../utils/util";
+import { toastError, DetailType } from "../../utils/util";
 import { uploadImage } from "../../services/image";
 import { getUserByUserId, addUser } from "../../services/user";
 import { getUserId } from "../../services/cloud";
@@ -26,6 +28,10 @@ export interface Data {
   groupQrCode: Image[];
   personalQrCode: Image[];
   submitData: AddGroupParams;
+  editGroup?: {
+    groupType: DetailType;
+    groupId: string;
+  };
 }
 
 const emptySubmitData: AddGroupParams = {
@@ -66,7 +72,7 @@ type UploaderDeleteEvent = Event<{
 
 Page({
   data,
-  onLoad() {
+  onShow() {
     const that = this;
     const initUserData = async (userInfo: WechatMiniprogram.UserInfo) => {
       const userId = (await getUserId()).openid;
@@ -99,27 +105,49 @@ Page({
     }
     // 带初始值
     if (app_publish.globalData.tabPublishQuery) {
-      const { groupId } = app_publish.globalData.tabPublishQuery;
+      that.setData(data);
+      const {
+        groupId,
+        detailType: groupType,
+      } = app_publish.globalData.tabPublishQuery;
       console.log("tabPublishQuery", groupId);
       app_publish.globalData.tabPublishQuery = undefined;
       (async () => {
+        wx.showLoading({
+          title: "加载群数据",
+        });
         const group = await getGroupByGroupId(groupId);
+        console.log("getGroupByGroupId", group);
+        wx.hideLoading();
         if (!group) {
+          toastError("没有该群的数据");
           return;
         }
         const {
           images,
           groupQrCode,
           personalQrCode,
-          ...otherGroupInfo
+          title,
+          introduction,
+          masterName,
+          masterPhone,
         } = group;
-        that.setData({
+        const data: Data = {
+          title,
+          introduction,
+          masterPhone,
+          masterName,
           photos: images.map((url) => ({ url })),
-          ...otherGroupInfo,
           groupQrCode: [{ url: groupQrCode }],
-          personalQrCode: [{ url: personalQrCode }],
+          personalQrCode:
+            personalQrCode === "" ? [] : [{ url: personalQrCode }],
           submitData: group,
-        });
+          editGroup: {
+            groupType: groupType,
+            groupId,
+          },
+        };
+        that.setData(data);
       })();
     }
     that.setData({
@@ -201,6 +229,7 @@ Page({
     }
     const { cityId } = app_publish.globalData.location;
     const { _id: userId } = app_publish.globalData.user;
+    const { submitData, editGroup } = that.data;
     const {
       title,
       introduction,
@@ -209,7 +238,7 @@ Page({
       personalQrCode,
       groupQrCode,
       images,
-    } = that.data.submitData;
+    } = submitData;
     if (title.length === 0) {
       toastError("未填写标题");
       return;
@@ -231,7 +260,7 @@ Page({
     }
     (async () => {
       try {
-        await addGroup({
+        const params: AddGroupParams = {
           cityId,
           masterId: userId,
           masterName,
@@ -241,7 +270,21 @@ Page({
           personalQrCode,
           title,
           introduction,
-        });
+        };
+        if (editGroup) {
+          const { groupId: oldGroupId, groupType } = editGroup;
+          switch (groupType) {
+            case "passed":
+              await editPassedGroup(params, oldGroupId);
+              break;
+            case "pending":
+            case "rejected":
+              await Promise.all([deleteGroup(oldGroupId), addGroup(params)]);
+              break;
+          }
+        } else {
+          await addGroup(params);
+        }
         that.data.submitData = emptySubmitData;
         {
           const {

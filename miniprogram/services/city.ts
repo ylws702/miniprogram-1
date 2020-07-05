@@ -1,7 +1,8 @@
-import db from "./db";
-import { CityInfo } from "../model";
-import { uuid, queryGet } from "../utils/util";
-const db_city = db.collection("city");
+import db from './db';
+import { CityInfo } from '../model';
+import { uuid, queryGet } from '../utils/util';
+
+const db_city = db.collection('city');
 const MAX_LIMIT = 20;
 
 export interface Province {
@@ -16,7 +17,7 @@ export async function getCityData() {
   // 计算需分几次取
   const batchTimes = Math.ceil(total / 20);
   // 承载所有读操作的 promise 的数组
-  const tasks = [];
+  const tasks: Promise<Taro.DB.Query.IQueryResult>[] = [];
   for (let i = 0; i < batchTimes; i++) {
     const promise = db_city
       .skip(i * MAX_LIMIT)
@@ -30,9 +31,9 @@ export async function getCityData() {
       const cityData = value.data as CityInfo[];
       cityData.forEach((cityInfo) => {
         const { province } = cityInfo;
-        const value = map.get(province);
-        if (value) {
-          value.push(cityInfo);
+        const cityInfoData = map.get(province);
+        if (cityInfoData) {
+          cityInfoData.push(cityInfo);
         } else {
           map.set(province, [cityInfo]);
         }
