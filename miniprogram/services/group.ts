@@ -1,6 +1,6 @@
-import db from "./db";
-import { Group, GroupStatus } from "../model";
-import { uuid, queryGet } from "../utils/util";
+import db from './db';
+import { Group, GroupStatus } from '../model';
+import { queryGet, uuid } from '../utils/util';
 
 const db_group = db.collection("group");
 const _ = db.command;
@@ -30,7 +30,7 @@ export async function searchGroups(params: SearchGroupsParams) {
   };
   const _ = db.command;
 
-  console.log("searchGroups", params);
+  console.log('searchGroups', params);
   const { data } = await queryGet(
     db_group.where(
       _.and([
@@ -39,13 +39,13 @@ export async function searchGroups(params: SearchGroupsParams) {
           {
             title: {
               $regex: `.*${params.keyword}.*`,
-              $options: "i",
+              $options: 'i',
             },
           },
           {
             introduction: {
               $regex: `.*${params.keyword}.*`,
-              $options: "i",
+              $options: 'i',
             },
           },
         ]),
@@ -65,20 +65,36 @@ export async function getGroupByGroupId(groupId: string) {
   return group as Group;
 }
 
-export async function getGroupCountByUserId(
-  masterId: string,
-  status?: GroupStatus
-) {
-  const filter: Partial<Group> = { masterId, status };
+export async function getGroupCount(status?: GroupStatus) {
+  const filter: Partial<Group> = { status };
   const value = await db_group.where(filter).count();
   return value.total;
 }
 
-export async function getGroupsByUserId(
-  masterId: string,
-  status?: GroupStatus
+export async function rejectGroupByGroupId(
+  groupId: string,
+  rejectReason: string
 ) {
-  const filter: Partial<Group> = { masterId, status };
+  const partial: Partial<Group> = {
+    status: GroupStatus.Rejected,
+    rejectReason,
+  };
+  await db_group.doc(groupId).update({
+    data: partial,
+  });
+}
+
+export async function passGroupByGroupId(groupId: string) {
+  const partial: Partial<Group> = {
+    status: GroupStatus.Passed,
+  };
+  await db_group.doc(groupId).update({
+    data: partial,
+  });
+}
+
+export async function getGroupsByStatus(status: GroupStatus) {
+  const filter: Partial<Group> = { status };
   const value = await queryGet(db_group.where(filter));
   return value.data as Group[];
 }
@@ -102,7 +118,7 @@ export interface AddGroupParams {
 }
 
 export async function addGroup(params: AddGroupParams) {
-  console.log("addGroup", params);
+  console.log('addGroup', params);
   const groupId = uuid();
   const data: Group = {
     _id: groupId,
@@ -149,7 +165,7 @@ export async function updateLikeByGroupId(
 ): Promise<void> {
   const group: any = await getGroupByGroupId(params.groupId);
   if (!group) {
-    return Promise.reject("没有该groupId");
+    return Promise.reject('没有该groupId');
   }
   await db_group.doc(group._id).update({
     data: {
@@ -169,7 +185,7 @@ export async function addCommentByGroupId(
   const { commentId, groupId } = params;
   const group = await getGroupByGroupId(groupId);
   if (!group) {
-    return Promise.reject("没有该groupId");
+    return Promise.reject('没有该groupId');
   }
   const { comments } = group;
   comments.push(commentId);

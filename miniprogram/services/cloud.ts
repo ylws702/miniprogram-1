@@ -1,5 +1,7 @@
+import Taro from '@tarojs/taro';
+
 export default function initCloud() {
-  wx.cloud.init({
+  Taro.cloud.init({
     traceUser: true,
   });
 }
@@ -10,8 +12,8 @@ export interface UserId {
 }
 
 export async function getUserId() {
-  const cloudResult = await wx.cloud.callFunction({
-    name: "getUserId",
+  const cloudResult = await Taro.cloud.callFunction({
+    name: 'getUserId',
   });
   return new Promise<UserId>((resolve, reject) => {
     const { result, errMsg } = cloudResult;
