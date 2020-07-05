@@ -24,43 +24,110 @@
 		</view>
 	</view>
 	<view class="section2">
-		<view
-		 wx:key="_id"
-		 wx:for="{{groupData}}"
-		 wx:for-index="groupDataIndex"
-		 wx:for-item="groupDataItem"
-		>
-			<navigator url="../detail/detail?groupId={{groupDataItem._id}}">
-				<view class="group">
-					<view class="group-image-wrapper">
-						<image class="group-image" src="{{groupDataItem.images[0]}}" />
-					</view>
-					<view class="group-title">
-						{{groupDataItem.title}}
-					</view>
-					<view class="group-introduction">
-						{{groupDataItem.introduction}}
-					</view>
-					<view class="group-footer">
-						<view class="user">
-							<image class="user-icon" src="{{groupDataItem.userIcon}}" />
-							<view class="user-name">
-								{{groupDataItem.masterName}}
+		<view class="left">
+			<view
+			 wx:key="_id"
+			 wx:for="{{groupData0}}"
+			 wx:for-index="groupDataIndex"
+			 wx:for-item="groupDataItem"
+			>
+				<navigator url="../detail/detail?groupId={{groupDataItem._id}}">
+					<view class="cu-card case">
+						<view class="cu-item shadow">
+							<view class="image">
+								<image src="{{groupDataItem.images[0]}}" mode="widthFix"></image>
+								<view wx:if="{{groupDataItem.setTop}}" class="cu-tag bg-blue">置顶</view>
+								<view class="cu-bar bg-shadeBottom">
+									<text class="text-cut">{{groupDataItem.title}}</text>
+								</view>
+							</view>
+							<view class="cu-list menu-avatar">
+								<view class="content">
+									{{groupDataItem.introduction}}
+								</view>
+								<view class="cu-item">
+									<view class="cu-avatar round lg">
+										<image class="round user-icon" src="{{groupDataItem.userIcon}}" />
+									</view>
+									<view class="content flex-sub">
+										<view class="text-grey">{{groupDataItem.masterName}}</view>
+										<view class="text-gray text-sm flex justify-between">
+											<view class="text-gray text-sm">
+												<!-- <text class="cuIcon-appreciatefill margin-lr-xs"></text>
+											20 -->
+												<view
+												 catchtap="onLikeTap"
+												 data-groupid="{{groupDataItem._id}}"
+												 class="like"
+												>
+													<image class="like-icon" src="{{groupDataItem.ifLike ? '../../images/icon_praise_h@3x.png' : '../../images/icon_praise_n@3x.png'}}" />
+													<view class="like-number">
+														{{groupDataItem.like}}
+													</view>
+												</view>
+											</view>
+										</view>
+									</view>
+								</view>
 							</view>
 						</view>
-						<view
-						 catchtap="onLikeTap"
-						 data-groupid="{{groupDataItem._id}}"
-						 class="like"
-						>
-							<image class="like-icon" src="{{groupDataItem.ifLike ? '../../images/icon_praise_h@3x.png' : '../../images/icon_praise_n@3x.png'}}" />
-							<view class="like-number">
-								{{groupDataItem.like}}
+
+					</view>
+				</navigator>
+			</view>
+		</view>
+		<view class="right">
+
+			<view
+			 wx:key="_id"
+			 wx:for="{{groupData1}}"
+			 wx:for-index="groupDataIndex"
+			 wx:for-item="groupDataItem"
+			>
+				<navigator url="../detail/detail?groupId={{groupDataItem._id}}">
+					<view class="cu-card case">
+						<view class="cu-item shadow">
+							<view class="image">
+								<image src="{{groupDataItem.images[0]}}" mode="widthFix"></image>
+								<view wx:if="{{groupDataItem.setTop}}" class="cu-tag bg-blue">置顶</view>
+								<view class="cu-bar bg-shadeBottom">
+									<text class="text-cut">{{groupDataItem.title}}</text>
+								</view>
+							</view>
+							<view class="cu-list menu-avatar">
+								<view class="content">
+									{{groupDataItem.introduction}}
+								</view>
+								<view class="cu-item">
+									<view class="cu-avatar round lg">
+										<image class="round user-icon" src="{{groupDataItem.userIcon}}" />
+									</view>
+									<view class="content flex-sub">
+										<view class="text-grey">{{groupDataItem.masterName}}</view>
+										<view class="text-gray text-sm flex justify-between">
+											<view class="text-gray text-sm">
+												<!-- <text class="cuIcon-appreciatefill margin-lr-xs"></text>
+											20 -->
+												<view
+												 catchtap="onLikeTap"
+												 data-groupid="{{groupDataItem._id}}"
+												 class="like"
+												>
+													<image class="like-icon" src="{{groupDataItem.ifLike ? '../../images/icon_praise_h@3x.png' : '../../images/icon_praise_n@3x.png'}}" />
+													<view class="like-number">
+														{{groupDataItem.like}}
+													</view>
+												</view>
+											</view>
+										</view>
+									</view>
+								</view>
 							</view>
 						</view>
+
 					</view>
-				</view>
-			</navigator>
+				</navigator>
+			</view>
 		</view>
 	</view>
 </view>

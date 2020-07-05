@@ -1,4 +1,4 @@
-const db = Taro.cloud.database();
+const db = wx.cloud.database();
 
 export default db;
 

@@ -17,7 +17,7 @@ export async function getCityData() {
   // 计算需分几次取
   const batchTimes = Math.ceil(total / 20);
   // 承载所有读操作的 promise 的数组
-  const tasks: Promise<Taro.DB.Query.IQueryResult>[] = [];
+  const tasks: Promise<DB.IQueryResult>[] = [];
   for (let i = 0; i < batchTimes; i++) {
     const promise = db_city
       .skip(i * MAX_LIMIT)

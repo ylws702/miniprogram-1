@@ -23,6 +23,8 @@ interface Data {
   cityId: string;
   searchValue: string;
   groupData: GroupInfo[];
+  groupData0: GroupInfo[];
+  groupData1: GroupInfo[];
   canIUse: boolean;
   multiArray: string[][];
   multiIndex: number[];
@@ -34,6 +36,8 @@ const data: Data = {
   cityId: "",
   searchValue: "",
   groupData: [],
+  groupData0: [],
+  groupData1: [],
   canIUse: wx.canIUse("button.open-type.getUserInfo"),
   multiArray: [["加载中"], ["加载中"]],
   multiIndex: [0, 0],
@@ -126,7 +130,11 @@ Page({
           };
         }
       );
-      that.setData({ groupData });
+      that.setData({
+        groupData,
+        groupData0: groupData.filter((_, i) => !(i % 2)),
+        groupData1: groupData.filter((_, i) => i % 2),
+      });
       const loadUserIcon = groups.map(async ({ masterId }, index) => {
         const master = await getUserByUserId(masterId);
         if (!master) {
@@ -135,7 +143,11 @@ Page({
         groupData[index].userIcon = master.userIcon;
       });
       await Promise.all(loadUserIcon);
-      that.setData({ groupData });
+      that.setData({
+        groupData,
+        groupData0: groupData.filter((_, i) => !(i % 2)),
+        groupData1: groupData.filter((_, i) => i % 2),
+      });
     } catch (error) {
       console.error(error);
       toastError("获取定位失败");
@@ -164,6 +176,8 @@ Page({
     group.like += dLike;
     that.setData({
       groupData,
+      groupData0: groupData.filter((_, i) => !(i % 2)),
+      groupData1: groupData.filter((_, i) => i % 2),
     });
   },
   onPickerTap() {
